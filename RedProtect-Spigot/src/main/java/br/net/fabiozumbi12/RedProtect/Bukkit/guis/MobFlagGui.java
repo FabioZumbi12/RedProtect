@@ -41,6 +41,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryCreativeEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.Inventory;
@@ -59,21 +61,31 @@ import static org.bukkit.ChatColor.translateAlternateColorCodes;
 
 public class MobFlagGui implements Listener {
 
+    private static final int GUI_SIZE = 54;
+    private static final int MOBS_PER_PAGE = 43;
+    private static final int NAV_PREV_SLOT = 45;
+    private static final int NAV_INFO_SLOT = 49;
+    private static final int NAV_NEXT_SLOT = 53;
+
     private final String flag;
     private final Player player;
-    private final int size;
-    private ItemStack[] guiItems = new ItemStack[0];
     private Region region;
     private String name;
+    private List<ItemStack> allMobItems;
+    private int currentPage = 0;
+    private int totalPages;
 
     public MobFlagGui(Player player, Region region, String flag) {
         this.player = player;
         this.region = region;
         this.flag = flag;
+        this.currentPage = 0;
+
+        List<EntityType> entities = new ArrayList<>();
 
         if (flag.equalsIgnoreCase("spawn-monsters")) {
             this.name = "Spawn Monsters";
-            List<EntityType> entities = Registry.ENTITY_TYPE.stream()
+            entities = Registry.ENTITY_TYPE.stream()
                     .filter(ent -> ent.getEntityClass() != null &&
                             ent.getKey().getNamespace().startsWith("minecraft") &&
                             Monster.class.isAssignableFrom(ent.getEntityClass()))
@@ -84,12 +96,11 @@ public class MobFlagGui implements Listener {
                             RedProtect.get().getConfigManager().configRoot().flags_configuration.modEntities.monsters.contains(ent.name()))
                     .sorted(Comparator.comparing(EntityType::name)).toList();
             entities.addAll(modEntities);
-            this.guiItems = getItemList(entities, region.getFlagString(flag), true);
         }
 
         if (flag.equalsIgnoreCase("spawn-animals")) {
             this.name = "Spawn Animals";
-            List<EntityType> entities = Registry.ENTITY_TYPE.stream()
+            entities = Registry.ENTITY_TYPE.stream()
                     .filter(ent -> {
                         Class<? extends Entity> entityClass = ent.getEntityClass();
                         if (entityClass == null) return false;
@@ -106,25 +117,11 @@ public class MobFlagGui implements Listener {
                                     RedProtect.get().getConfigManager().configRoot().flags_configuration.modEntities.animals.contains(ent.name()))
                     .sorted(Comparator.comparing(EntityType::name)).toList();
             entities.addAll(modEntities);
-            this.guiItems = getItemList(entities, region.getFlagString(flag), false);
         }
 
-        int maxSlots = this.guiItems.length;
-        if (maxSlots <= 9) {
-            this.size = 9;
-        } else if (maxSlots <= 18) {
-            this.size = 18;
-        } else if (maxSlots <= 27) {
-            this.size = 27;
-        } else if (maxSlots <= 36) {
-            this.size = 36;
-        } else if (maxSlots <= 45) {
-            this.size = 45;
-        } else if (maxSlots <= 54) {
-            this.size = 54;
-        } else {
-            throw new IllegalArgumentException("Parameter size is exceeding size limit (54)");
-        }
+        boolean monster = flag.equalsIgnoreCase("spawn-monsters");
+        this.allMobItems = buildAllMobItems(entities, region.getFlagString(flag), monster);
+        this.totalPages = Math.max(1, (int) Math.ceil((double) allMobItems.size() / MOBS_PER_PAGE));
     }
 
     @EventHandler
@@ -134,17 +131,20 @@ public class MobFlagGui implements Listener {
         }
 
         StringBuilder str = new StringBuilder();
-        Arrays.stream(event.getInventory().getContents())
-                .filter(item -> item != null && !item.getType().equals(Material.AIR) && item.getItemMeta().hasLore())
-                .map(item -> item.getItemMeta().getLore())
-                .forEach(lore -> {
-                    if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true"))))
-                        str.append(lore.get(1).replace("§0", "")).append(",");
-                });
+        String trueValue = translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true"));
+
+        for (ItemStack item : allMobItems) {
+            if (item != null && item.hasItemMeta() && item.getItemMeta().hasLore()) {
+                List<String> lore = item.getItemMeta().getLore();
+                if (lore.get(0).equalsIgnoreCase(trueValue)) {
+                    str.append(lore.get(1).replace("§0", "")).append(",");
+                }
+            }
+        }
 
         String value = str.toString();
         if (!value.isEmpty()) {
-            value = value.substring(0, str.toString().length() - 1);
+            value = value.substring(0, value.length() - 1);
         } else {
             value = "false";
         }
@@ -161,22 +161,40 @@ public class MobFlagGui implements Listener {
             if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
                 event.setCancelled(true);
 
-                if (event.getRawSlot() == 0) {
+                int slot = event.getRawSlot();
+
+                if (slot == 0) {
                     setFlagValue(true);
                     close(true);
                     return;
                 }
 
-                if (event.getRawSlot() == 1) {
+                if (slot == 1) {
                     setFlagValue(false);
                     close(true);
                     return;
                 }
 
+                if (slot == NAV_PREV_SLOT && currentPage > 0) {
+                    openPage(currentPage - 1);
+                    return;
+                }
+
+                if (slot == NAV_NEXT_SLOT && currentPage < totalPages - 1) {
+                    openPage(currentPage + 1);
+                    return;
+                }
+
                 ItemStack item = event.getCurrentItem();
-                if (item != null && !item.equals(RedProtect.get().getConfigManager().getGuiSeparator()) && !item.getType().equals(Material.AIR) && event.getRawSlot() >= 0 && event.getRawSlot() <= this.size - 1) {
+                if (item != null && !item.equals(RedProtect.get().getConfigManager().getGuiSeparator()) && !item.getType().equals(Material.AIR) && slot >= 2 && slot <= 44) {
                     ItemMeta itemMeta = item.getItemMeta();
                     List<String> lore = itemMeta.getLore();
+
+                    String entityName = null;
+                    if (lore.size() > 1 && lore.get(1).startsWith("§0")) {
+                        entityName = lore.get(1).substring(2);
+                    }
+
                     if (lore.get(0).equalsIgnoreCase(translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("true")))) {
                         lore.set(0, translateAlternateColorCodes('&', RedProtect.get().guiLang.getFlagString("value") + " " + RedProtect.get().guiLang.getFlagString("false")));
                         item.setAmount(1);
@@ -186,8 +204,33 @@ public class MobFlagGui implements Listener {
                     }
                     itemMeta.setLore(lore);
                     item.setItemMeta(itemMeta);
+
+                    if (entityName != null) {
+                        syncMobItem(entityName, lore.get(0));
+                    }
                 }
             }
+        }
+    }
+
+    @EventHandler
+    void onDrag(InventoryDragEvent event) {
+        if (!event.getView().getPlayer().equals(this.player)) {
+            return;
+        }
+        // Cancel any drag that involves the top inventory (our GUI)
+        if (event.getView().getTopInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler
+    void onCreative(InventoryCreativeEvent event) {
+        if (!event.getWhoClicked().equals(this.player)) {
+            return;
+        }
+        if (event.getInventory().equals(this.player.getOpenInventory().getTopInventory())) {
+            event.setCancelled(true);
         }
     }
 
@@ -222,17 +265,27 @@ public class MobFlagGui implements Listener {
         Bukkit.getScheduler().runTaskLater(RedProtect.get(), this.player::updateInventory, 1);
         if (close) this.player.closeInventory();
 
-        this.guiItems = null;
+        this.allMobItems = null;
         this.region = null;
     }
 
     public void open() {
         //Register Listener
         RedProtect.get().getServer().getPluginManager().registerEvents(this, RedProtect.get());
+        openPage(0);
+    }
 
-        Inventory inv = Bukkit.createInventory(player, this.size, this.name);
-        inv.setContents(this.guiItems);
-        player.openInventory(inv);
+    private void openPage(int page) {
+        this.currentPage = page;
+        ItemStack[] contents = buildPageContents(page);
+        Inventory topInv = this.player.getOpenInventory().getTopInventory();
+        if (topInv != null && topInv.getSize() == GUI_SIZE) {
+            topInv.setContents(contents);
+        } else {
+            Inventory inv = Bukkit.createInventory(player, GUI_SIZE, this.name);
+            inv.setContents(contents);
+            player.openInventory(inv);
+        }
     }
 
     private void setFlagValue(Object value) {
@@ -241,40 +294,17 @@ public class MobFlagGui implements Listener {
         RedProtect.get().logger.addLog("(World " + region.getWorld() + ") Player " + player.getName() + " SET FLAG " + flag + " of region " + region.getName() + " to " + region.getFlagString(flag));
     }
 
-    private ItemStack[] getItemList(List<EntityType> entities, String flagValue, boolean monster) {
+    private List<ItemStack> buildAllMobItems(List<EntityType> entities, String flagValue, boolean monster) {
         List<String> split = Arrays.asList(flagValue.trim().split(","));
         List<ItemStack> items = new ArrayList<>();
-
-        ItemStack greenWool = new ItemStack(Material.EMERALD_BLOCK);
-        ItemMeta greenMeta = greenWool.getItemMeta();
-
-        Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
-
-        if (flagValue.equalsIgnoreCase("true")) {
-            greenMeta.addEnchant(enchType, 0, true);
-            greenMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-        greenMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectall")));
-        greenWool.setItemMeta(greenMeta);
-        items.add(greenWool);
-
-        ItemStack redWool = new ItemStack(Material.REDSTONE_BLOCK);
-        ItemMeta redMeta = redWool.getItemMeta();
-        if (flagValue.equalsIgnoreCase("false")) {
-            redMeta.addEnchant(enchType, 0, true);
-            redMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        }
-        redMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectnone")));
-        redWool.setItemMeta(redMeta);
-        items.add(redWool);
 
         for (EntityType ent : entities) {
             ItemStack head;
             try {
                 var texture = RedProtect.get().getConfigManager().headTextRoot().mobTextures.get(ent.name());
-                try{
+                try {
                     head = RedProtect.get().getUtil().createSkullOld(texture);
-                } catch (Exception ex){
+                } catch (Exception ex) {
                     head = RedProtect.get().getUtil().createSkull(texture);
                 }
             } catch (Exception ex) {
@@ -289,7 +319,6 @@ public class MobFlagGui implements Listener {
                 head.setAmount(2);
             }
 
-            // Item name
             String display = translateAlternateColorCodes('&', "&6" + ent.name());
             if (RedProtect.get().hooks.transAPI != null) {
                 display = translateAlternateColorCodes('&', "&6" + RedProtect.get().hooks.transAPI.getApi().translateEntity(ent, "en-us", true));
@@ -304,11 +333,97 @@ public class MobFlagGui implements Listener {
             items.add(head);
         }
 
-        List<ItemStack> subList = items;
-        if (items.size() > 54)
-            subList = items.subList(0, 54);
+        return items;
+    }
 
-        ItemStack[] listItems = new ItemStack[subList.size()];
-        return subList.toArray(listItems);
+    private ItemStack[] buildPageContents(int page) {
+        ItemStack[] contents = new ItemStack[GUI_SIZE];
+
+        Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
+        String flagValue = region.getFlagString(flag);
+
+        // Slot 0: Select All
+        ItemStack greenWool = new ItemStack(Material.EMERALD_BLOCK);
+        ItemMeta greenMeta = greenWool.getItemMeta();
+        if (flagValue.equalsIgnoreCase("true")) {
+            greenMeta.addEnchant(enchType, 0, true);
+            greenMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+        greenMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectall")));
+        greenWool.setItemMeta(greenMeta);
+        contents[0] = greenWool;
+
+        // Slot 1: Select None
+        ItemStack redWool = new ItemStack(Material.REDSTONE_BLOCK);
+        ItemMeta redMeta = redWool.getItemMeta();
+        if (flagValue.equalsIgnoreCase("false")) {
+            redMeta.addEnchant(enchType, 0, true);
+            redMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        }
+        redMeta.setDisplayName(translateAlternateColorCodes('&', RedProtect.get().getLanguageManager().get("gui.selectnone")));
+        redWool.setItemMeta(redMeta);
+        contents[1] = redWool;
+
+        // Slots 2-44: mob items for this page
+        int start = page * MOBS_PER_PAGE;
+        int end = Math.min(start + MOBS_PER_PAGE, allMobItems.size());
+        int slot = 2;
+        for (int i = start; i < end; i++) {
+            contents[slot++] = allMobItems.get(i);
+        }
+
+        // Navigation row (only if more than 1 page)
+        if (totalPages > 1) {
+            ItemStack filler = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+            ItemMeta fillerMeta = filler.getItemMeta();
+            fillerMeta.setDisplayName(" ");
+            filler.setItemMeta(fillerMeta);
+
+            for (int i = NAV_PREV_SLOT; i <= NAV_NEXT_SLOT; i++) {
+                contents[i] = filler;
+            }
+
+            if (page > 0) {
+                ItemStack prev = new ItemStack(Material.ARROW);
+                ItemMeta prevMeta = prev.getItemMeta();
+                prevMeta.setDisplayName(translateAlternateColorCodes('&', "&ePágina Anterior"));
+                prev.setItemMeta(prevMeta);
+                contents[NAV_PREV_SLOT] = prev;
+            }
+
+            ItemStack info = new ItemStack(Material.PAPER);
+            ItemMeta infoMeta = info.getItemMeta();
+            infoMeta.setDisplayName(translateAlternateColorCodes('&', "&ePágina " + (page + 1) + "/" + totalPages));
+            info.setItemMeta(infoMeta);
+            contents[NAV_INFO_SLOT] = info;
+
+            if (page < totalPages - 1) {
+                ItemStack next = new ItemStack(Material.ARROW);
+                ItemMeta nextMeta = next.getItemMeta();
+                nextMeta.setDisplayName(translateAlternateColorCodes('&', "&ePróxima Página"));
+                next.setItemMeta(nextMeta);
+                contents[NAV_NEXT_SLOT] = next;
+            }
+        }
+
+        return contents;
+    }
+
+    private void syncMobItem(String entityName, String newLoreLine) {
+        String hiddenName = "§0" + entityName;
+        for (ItemStack mobItem : allMobItems) {
+            if (mobItem != null && mobItem.hasItemMeta() && mobItem.getItemMeta().hasLore()) {
+                List<String> mobLore = mobItem.getItemMeta().getLore();
+                if (mobLore.size() > 1 && mobLore.get(1).equals(hiddenName)) {
+                    ItemMeta meta = mobItem.getItemMeta();
+                    List<String> lore = meta.getLore();
+                    lore.set(0, newLoreLine);
+                    meta.setLore(lore);
+                    mobItem.setAmount(newLoreLine.contains(RedProtect.get().guiLang.getFlagString("true")) ? 2 : 1);
+                    mobItem.setItemMeta(meta);
+                    break;
+                }
+            }
+        }
     }
 }
