@@ -1357,7 +1357,7 @@ public class PlayerListener implements Listener {
         if (RedProtect.get().getConfigManager().configRoot().notify.welcome_mode.equalsIgnoreCase("BOSSBAR")) {
             Compat111.sendBarMsg(wel, "GREEN", p);
         }
-        if (RedProtect.get().getConfigManager().configRoot().notify.region_enter_mode.equalsIgnoreCase("ACTIONBAR")) {
+        if (RedProtect.get().getConfigManager().configRoot().notify.welcome_mode.equalsIgnoreCase("ACTIONBAR")) {
             try {
                 Class.forName("net.md_5.bungee.api.chat.BaseComponent");
                 SpigotHelper.sendSpigotActionBar(p, wel);
