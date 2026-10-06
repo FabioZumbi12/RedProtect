@@ -302,11 +302,7 @@ public class MobFlagGui implements Listener {
             ItemStack head;
             try {
                 var texture = RedProtect.get().getConfigManager().headTextRoot().mobTextures.get(ent.name());
-                try {
-                    head = RedProtect.get().getUtil().createSkullOld(texture);
-                } catch (Exception ex) {
-                    head = RedProtect.get().getUtil().createSkull(texture);
-                }
+                head = RedProtect.get().getUtil().createSkull(texture);
             } catch (Exception ex) {
                 head = new ItemStack(monster ? Material.MAGMA_CREAM : Material.BONE);
                 RedProtect.get().logger.log("Error on open GUI: " + ex.getMessage());
@@ -340,7 +336,7 @@ public class MobFlagGui implements Listener {
     private ItemStack[] buildPageContents(int page) {
         ItemStack[] contents = new ItemStack[GUI_SIZE];
 
-        Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
+        Enchantment enchType = Enchantment.UNBREAKING;
         String flagValue = region.getFlagString(flag);
 
         // Slot 0: Select All

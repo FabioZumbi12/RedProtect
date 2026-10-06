@@ -28,8 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitBlocks;
-import br.net.fabiozumbi12.RedProtect.Bukkit.ents.RPBukkitEntities;
 import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
@@ -238,12 +236,7 @@ public class RedProtectUtil extends CoreUtil {
         try {
             return b.getType().getKey().getNamespace().equalsIgnoreCase("minecraft");
         } catch (Throwable t) {
-            try {
-                RPBukkitBlocks.valueOf(b.getType().name());
-                return true;
-            } catch (Exception e) {
-                return false;
-            }
+            return true;
         }
     }
 
@@ -252,12 +245,7 @@ public class RedProtectUtil extends CoreUtil {
         try {
             return e.getType().getKey().getNamespace().equalsIgnoreCase("minecraft");
         } catch (Throwable ex) {
-            try {
-                RPBukkitEntities.valueOf(e.getType().name());
-                return true;
-            } catch (Exception exc) {
-                return false;
-            }
+            return true;
         }
     }
 
@@ -1155,39 +1143,9 @@ public class RedProtectUtil extends CoreUtil {
         return rname;
     }
 
-    public ItemStack createSkullOld(String texture) throws Exception {
-        Material mat = Material.getMaterial("PLAYER_HEAD");
-        ItemStack s;
-        if (mat != null) {
-            s = new ItemStack(mat);
-        } else {
-            s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
-        }
-
-        SkullMeta meta = (SkullMeta) s.getItemMeta();
-
-        try {
-            GameProfile profile = new GameProfile(UUID.randomUUID(), "");
-            profile.getProperties().put("textures", new Property("textures", texture));
-            Field profileField = meta.getClass().getDeclaredField("profile");
-            profileField.setAccessible(true);
-            profileField.set(meta, profile);
-        } catch (IllegalArgumentException | IllegalAccessException | NoSuchFieldException | SecurityException | NoSuchMethodError e) {
-            throw new Exception(e.getMessage());
-        }
-        s.setItemMeta(meta);
-        return s;
-    }
-
     /* Skull texture example by https://github.com/RRS-9747/HeadDrop */
     public ItemStack createSkull(String texture) {
-        Material mat = Material.getMaterial("PLAYER_HEAD");
-        ItemStack s;
-        if (mat != null) {
-            s = new ItemStack(mat);
-        } else {
-            s = new ItemStack(Material.getMaterial("SKULL_ITEM"), 1, (short) 3);
-        }
+        ItemStack s = new ItemStack(Material.PLAYER_HEAD);
 
         try {
             // Only for paper servers
@@ -1198,12 +1156,12 @@ public class RedProtectUtil extends CoreUtil {
 
                 skullMeta.setPlayerProfile(playerProfile);
             });
-        } catch (Exception ex){
+        } catch (Exception ex) {
             // If not paper
-                SkullMeta sm = (SkullMeta) s.getItemMeta();
-                mutateItemMeta(sm, texture);
-                s.setItemMeta(sm);
-            }
+            SkullMeta sm = (SkullMeta) s.getItemMeta();
+            mutateItemMeta(sm, texture);
+            s.setItemMeta(sm);
+        }
         return s;
     }
 

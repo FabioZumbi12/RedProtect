@@ -127,7 +127,7 @@ public class FlagGui implements Listener {
                             "§0" + flag));
                     lore.addAll(RedProtect.get().guiLang.getFlagDescription(flag));
                     guiMeta.setLore(lore);
-                    Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
+                    Enchantment enchType = Enchantment.UNBREAKING;
                     if (flagValue.toString().equalsIgnoreCase("true")) {
                         guiMeta.addEnchant(enchType, 0, true);
                     } else {
@@ -267,7 +267,7 @@ public class FlagGui implements Listener {
             }
         }
 
-        Enchantment enchType = Enchantment.getByName("DURABILITY") == null ? Enchantment.getByName("UNBREAKING") : Enchantment.getByName("DURABILITY");
+        Enchantment enchType = Enchantment.UNBREAKING;
         if (this.region.getFlagBool(flag)) {
             itemMeta.addEnchant(enchType, 0, true);
         } else {

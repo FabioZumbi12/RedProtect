@@ -773,7 +773,6 @@ public class BlockListener implements Listener {
         }
     }
 
-    @SuppressWarnings("deprecation")
     @EventHandler(ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent e) {
         RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockListener - Is BlockPistonRetractEvent event");
@@ -784,44 +783,21 @@ public class BlockListener implements Listener {
         World w = e.getBlock().getWorld();
         boolean antih = RedProtect.get().getConfigManager().configRoot().region_settings.anti_hopper;
         Block piston = e.getBlock();
-        if (!Bukkit.getBukkitVersion().startsWith("1.8.") && !Bukkit.getBukkitVersion().startsWith("1.9.")) {
-            Block b = e.getRetractLocation().getBlock();
-            RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonRetractEvent not 1.8 event - Block: " + b.getType().name());
-            Region pr = RedProtect.get().getRegionManager().getTopRegion(piston.getLocation());
-            Region br = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-            if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
+        Block b = e.getRetractLocation().getBlock();
+        RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonRetractEvent - Block: " + b.getType().name());
+        Region pr = RedProtect.get().getRegionManager().getTopRegion(piston.getLocation());
+        Region br = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
+        if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
+            e.setCancelled(true);
+            return;
+        }
+        if (antih) {
+            int x = b.getX();
+            int y = b.getY();
+            int z = b.getZ();
+            Block ib = w.getBlockAt(x, y + 1, z);
+            if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)) {
                 e.setCancelled(true);
-                return;
-            }
-            if (antih) {
-                int x = b.getX();
-                int y = b.getY();
-                int z = b.getZ();
-                Block ib = w.getBlockAt(x, y + 1, z);
-                if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)) {
-                    e.setCancelled(true);
-                }
-            }
-        } else {
-            List<Block> blocks = e.getBlocks();
-            Region pr = RedProtect.get().getRegionManager().getTopRegion(piston.getLocation());
-            for (Block b : blocks) {
-                RedProtect.get().logger.debug(LogLevel.BLOCKS, "BlockPistonRetractEvent 1.8 event - Block: " + b.getType().name());
-                Region br = RedProtect.get().getRegionManager().getTopRegion(b.getLocation());
-                if (pr == null && br != null || (pr != null && br != null && pr != br && !pr.sameLeaders(br))) {
-                    e.setCancelled(true);
-                    return;
-                }
-                if (antih) {
-                    int x = b.getX();
-                    int y = b.getY();
-                    int z = b.getZ();
-                    Block ib = w.getBlockAt(x, y + 1, z);
-                    if (!cont.canWorldBreak(ib) || !cont.canWorldBreak(b)) {
-                        e.setCancelled(true);
-                        return;
-                    }
-                }
             }
         }
     }

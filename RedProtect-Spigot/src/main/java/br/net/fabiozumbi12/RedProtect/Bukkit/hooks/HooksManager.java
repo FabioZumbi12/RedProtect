@@ -100,7 +100,7 @@ public class HooksManager {
             if (checkWG()) {
                 RedProtect rp = RedProtect.get();
                 if (rp.isBukkitVersionAtLeast(1, 19)) {
-                    worldGuardHelper = (WorldGuardHelper) Class.forName("br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest").newInstance();
+                    worldGuardHelper = new br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest();
                     rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
                 } else {
                     rp.logger.warning("This version is only compatible with server version running on 1.19+. WorldGuard not hooked!");
