@@ -84,7 +84,7 @@ public class MobFlagGui implements Listener {
         List<EntityType> entities = new ArrayList<>();
 
         if (flag.equalsIgnoreCase("spawn-monsters")) {
-            this.name = "Spawn Monsters";
+            this.name = RedProtect.get().getLanguageManager().get("gui.title.spawn-monsters");
             entities = Registry.ENTITY_TYPE.stream()
                     .filter(ent -> ent.getEntityClass() != null &&
                             ent.getKey().getNamespace().startsWith("minecraft") &&
@@ -99,7 +99,7 @@ public class MobFlagGui implements Listener {
         }
 
         if (flag.equalsIgnoreCase("spawn-animals")) {
-            this.name = "Spawn Animals";
+            this.name = RedProtect.get().getLanguageManager().get("gui.title.spawn-animals");
             entities = Registry.ENTITY_TYPE.stream()
                     .filter(ent -> {
                         Class<? extends Entity> entityClass = ent.getEntityClass();
@@ -321,7 +321,8 @@ public class MobFlagGui implements Listener {
 
             String display = translateAlternateColorCodes('&', "&6" + ent.name());
             if (RedProtect.get().hooks.transAPI != null) {
-                display = translateAlternateColorCodes('&', "&6" + RedProtect.get().hooks.transAPI.getApi().translateEntity(ent, "en-us", true));
+                String lang = RedProtect.get().getConfigManager().configRoot().language.toLowerCase();
+                display = translateAlternateColorCodes('&', "&6" + RedProtect.get().hooks.transAPI.getApi().translateEntity(ent, lang, true));
             }
             itemMeta.setDisplayName(display);
 
@@ -386,21 +387,24 @@ public class MobFlagGui implements Listener {
             if (page > 0) {
                 ItemStack prev = new ItemStack(Material.ARROW);
                 ItemMeta prevMeta = prev.getItemMeta();
-                prevMeta.setDisplayName(translateAlternateColorCodes('&', "&ePágina Anterior"));
+                prevMeta.setDisplayName(RedProtect.get().getLanguageManager().get("gui.page.previous"));
                 prev.setItemMeta(prevMeta);
                 contents[NAV_PREV_SLOT] = prev;
             }
 
             ItemStack info = new ItemStack(Material.PAPER);
             ItemMeta infoMeta = info.getItemMeta();
-            infoMeta.setDisplayName(translateAlternateColorCodes('&', "&ePágina " + (page + 1) + "/" + totalPages));
+            String pageInfo = RedProtect.get().getLanguageManager().get("gui.page.number")
+                    .replace("{page}", String.valueOf(page + 1))
+                    .replace("{total}", String.valueOf(totalPages));
+            infoMeta.setDisplayName(pageInfo);
             info.setItemMeta(infoMeta);
             contents[NAV_INFO_SLOT] = info;
 
             if (page < totalPages - 1) {
                 ItemStack next = new ItemStack(Material.ARROW);
                 ItemMeta nextMeta = next.getItemMeta();
-                nextMeta.setDisplayName(translateAlternateColorCodes('&', "&ePróxima Página"));
+                nextMeta.setDisplayName(RedProtect.get().getLanguageManager().get("gui.page.next"));
                 next.setItemMeta(nextMeta);
                 contents[NAV_NEXT_SLOT] = next;
             }

@@ -590,13 +590,13 @@ public class CommandHandler implements CommandExecutor, TabCompleter, Listener {
 
                 if (CommandHandlers.checkCmd(args[0], "reload")) {
                     RedProtect.get().reload();
-                    RedProtect.get().getLanguageManager().sendMessage(sender, "RedProtect Plus reloaded!");
+                    RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.reloaded");
                     return true;
                 }
 
                 if (args[0].equalsIgnoreCase("reload-config")) {
                     RedProtect.get().reloadConfigs();
-                    RedProtect.get().getLanguageManager().sendMessage(sender, "RedProtect configs reloaded!");
+                    RedProtect.get().getLanguageManager().sendMessage(sender, "cmdmanager.reloaded.config");
                     return true;
                 }
             }

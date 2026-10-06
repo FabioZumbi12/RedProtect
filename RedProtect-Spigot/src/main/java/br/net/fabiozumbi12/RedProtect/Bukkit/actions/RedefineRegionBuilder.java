@@ -102,7 +102,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check if same area
         otherrg = RedProtect.get().getRegionManager().getTopRegion(newRegion.getCenterLoc());
         if (otherrg != null && !checkID(newRegion, otherrg) && otherrg.get4Points(newRegion.getCenterY()).equals(newRegion.get4Points(newRegion.getCenterY()))) {
-            this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.newRegion.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+            this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
             return;
         }
 
@@ -126,7 +126,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
         //check regions inside newRegion
         for (Region r : RedProtect.get().getRegionManager().getInnerRegions(newRegion, p.getWorld().getName())) {
             if (!r.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.newRegion.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
+                this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.region.overlapping").replace("{location}", "x: " + r.getCenterX() + ", z: " + r.getCenterZ()).replace("{player}", r.getLeadersDesc()));
                 return;
             }
             if (checkID(newRegion, r)) {
@@ -155,7 +155,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                 }
 
                 if (!otherrg.isLeader(p) && !p.hasPermission("redprotect.bypass")) {
-                    this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.newRegion.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
+                    this.setError(p, RedProtect.get().getLanguageManager().get("regionbuilder.region.overlapping").replace("{location}", "x: " + otherrg.getCenterX() + ", z: " + otherrg.getCenterZ()).replace("{player}", otherrg.getLeadersDesc()));
                     return;
                 }
                 othersName.add(otherrg.getName());
@@ -181,7 +181,7 @@ public class RedefineRegionBuilder extends RegionBuilder {
                     RedProtect.get().economy.withdrawPlayer(p, Math.abs(reco));
                 if (reco < 0)
                     RedProtect.get().economy.depositPlayer(p, Math.abs(reco));
-                p.sendMessage(RedProtect.get().getLanguageManager().get("economy.newRegion.claimed").replace("{price}", RedProtect.get().getConfigManager().ecoRoot().economy_symbol + reco + " " + RedProtect.get().getConfigManager().ecoRoot().economy_name));
+                p.sendMessage(RedProtect.get().getLanguageManager().get("economy.region.claimed").replace("{price}", RedProtect.get().getConfigManager().ecoRoot().economy_symbol + reco + " " + RedProtect.get().getConfigManager().ecoRoot().economy_name));
             } else {
                 RedProtect.get().getLanguageManager().sendMessage(p, "regionbuilder.notenought.money", new Replacer[]{new Replacer("{price}", RedProtect.get().getConfigManager().ecoRoot().economy_symbol + reco)});
                 return;
