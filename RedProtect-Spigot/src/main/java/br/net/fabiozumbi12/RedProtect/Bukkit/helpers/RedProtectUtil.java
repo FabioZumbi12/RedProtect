@@ -28,7 +28,6 @@ package br.net.fabiozumbi12.RedProtect.Bukkit.helpers;
 
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
-import br.net.fabiozumbi12.RedProtect.Bukkit.ents.TaskChain;
 import br.net.fabiozumbi12.RedProtect.Bukkit.hooks.WEHook;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
@@ -224,11 +223,11 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public void performCommand(final ConsoleCommandSender consoleCommandSender, final String command) {
-        TaskChain.newChain().add(new TaskChain.GenericTask() {
-            public void run() {
-                RedProtect.get().getServer().dispatchCommand(consoleCommandSender, command);
-            }
-        }).execute();
+        if (Bukkit.isPrimaryThread()) {
+            Bukkit.dispatchCommand(consoleCommandSender, command);
+        } else {
+            Bukkit.getScheduler().runTask(RedProtect.get(), () -> Bukkit.dispatchCommand(consoleCommandSender, command));
+        }
     }
 
     public boolean isBukkitBlock(Block b) {
