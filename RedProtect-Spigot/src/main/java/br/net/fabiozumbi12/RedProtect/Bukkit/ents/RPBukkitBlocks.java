@@ -27,6 +27,10 @@
 package br.net.fabiozumbi12.RedProtect.Bukkit.ents;
 
 
+/**
+ * @deprecated Legacy 1.8 enum of Minecraft blocks. Modern Bukkit utilizes {@link org.bukkit.Keyed#getKey()}.
+ */
+@Deprecated
 public enum RPBukkitBlocks {
     ACACIA_DOOR,
     ACACIA_DOOR_ITEM,

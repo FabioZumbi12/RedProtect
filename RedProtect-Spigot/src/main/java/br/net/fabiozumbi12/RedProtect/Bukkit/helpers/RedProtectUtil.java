@@ -234,22 +234,30 @@ public class RedProtectUtil extends CoreUtil {
     }
 
     public boolean isBukkitBlock(Block b) {
-        //check if is bukkit 1.8.8 blocks
+        if (b == null) return false;
         try {
-            RPBukkitBlocks.valueOf(b.getType().name());
-            return true;
-        } catch (Exception e) {
-            return false;
+            return b.getType().getKey().getNamespace().equalsIgnoreCase("minecraft");
+        } catch (Throwable t) {
+            try {
+                RPBukkitBlocks.valueOf(b.getType().name());
+                return true;
+            } catch (Exception e) {
+                return false;
+            }
         }
     }
 
     public boolean isBukkitEntity(Entity e) {
-        //check if is bukkit 1.8.8 Entity
+        if (e == null) return false;
         try {
-            RPBukkitEntities.valueOf(e.getType().name());
-            return true;
-        } catch (Exception ex) {
-            return false;
+            return e.getType().getKey().getNamespace().equalsIgnoreCase("minecraft");
+        } catch (Throwable ex) {
+            try {
+                RPBukkitEntities.valueOf(e.getType().name());
+                return true;
+            } catch (Exception exc) {
+                return false;
+            }
         }
     }
 

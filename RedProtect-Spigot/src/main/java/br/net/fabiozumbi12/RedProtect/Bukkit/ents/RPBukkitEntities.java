@@ -26,6 +26,10 @@
 
 package br.net.fabiozumbi12.RedProtect.Bukkit.ents;
 
+/**
+ * @deprecated Legacy 1.8/1.10 enum of Minecraft entities. Modern Bukkit utilizes {@link org.bukkit.Keyed#getKey()}.
+ */
+@Deprecated
 public enum RPBukkitEntities {
     AREA_EFFECT_CLOUD,
     ARMOR_STAND,
