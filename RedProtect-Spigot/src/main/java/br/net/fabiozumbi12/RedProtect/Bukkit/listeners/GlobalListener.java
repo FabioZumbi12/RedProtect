@@ -237,6 +237,7 @@ public class GlobalListener implements Listener {
 
         if (r == null && !RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).player_candrop) {
             e.setCancelled(true);
+            p.updateInventory();
         }
     }
 

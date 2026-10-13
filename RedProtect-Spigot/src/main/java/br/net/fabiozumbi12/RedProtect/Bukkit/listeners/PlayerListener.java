@@ -57,6 +57,9 @@ import org.bukkit.event.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.event.inventory.BrewEvent;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryDragEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -1285,7 +1288,37 @@ public class PlayerListener implements Listener {
 
         if (r != null && ((!r.canExit(p) && !r.canDrop(p)) || !r.canDrop(p))) {
             e.setCancelled(true);
+            p.updateInventory();
             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantdrop");
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryDropClick(InventoryClickEvent e) {
+        if (!(e.getWhoClicked() instanceof Player p)) return;
+
+        // Slot -999 or OUTSIDE: player clicking outside inventory with cursor item to drop it
+        if (e.getSlotType() == InventoryType.SlotType.OUTSIDE || e.getRawSlot() == -999) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null && !r.canDrop(p)) {
+                e.setCancelled(true);
+                p.updateInventory();
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantdrop");
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onInventoryDropDrag(InventoryDragEvent e) {
+        if (!(e.getWhoClicked() instanceof Player p)) return;
+
+        if (e.getRawSlots().contains(-999)) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null && !r.canDrop(p)) {
+                e.setCancelled(true);
+                p.updateInventory();
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantdrop");
+            }
         }
     }
 
