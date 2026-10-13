@@ -31,111 +31,28 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.region.CoreRegion;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class PAPIHook extends PlaceholderExpansion {
 
     @Override
-    public String onPlaceholderRequest(Player p, String arg) {
-        if (arg.equals("player_in_region")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            return r == null ? RedProtect.get().getLanguageManager().get("region.wilderness") : r.getName();
-        } else if (arg.equals("player_used_claims")) {
-            return String.valueOf(RedProtect.get().getRegionManager().getPlayerRegions(p.getUniqueId().toString(), p.getWorld().getName()));
-        } else if (arg.equals("player_used_blocks")) {
-            return String.valueOf(RedProtect.get().getRegionManager().getTotalRegionSize(p.getUniqueId().toString(), p.getWorld().getName()));
-        } else if (arg.equals("player_total_claims")) {
-            int l = RedProtect.get().getPermissionHandler().getPlayerClaimLimit(p);
-            return l == -1 ? RedProtect.get().getLanguageManager().get("regionbuilder.area.unlimited") : String.valueOf(l);
-        } else if (arg.equals("player_total_blocks")) {
-            int l = RedProtect.get().getPermissionHandler().getPlayerBlockLimit(p);
-            return l == -1 ? RedProtect.get().getLanguageManager().get("regionbuilder.area.unlimited") : String.valueOf(l);
-        } else if (arg.startsWith("region_flag_value_")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            if (r != null) {
-                String value = r.getFlagString(arg.replace("region_flag_value_", ""));
-                if (value == null) {
-                    return null;
-                }
-                if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
-                    return RedProtect.get().getLanguageManager().translBool(value);
-                }
-                return value;
-            } else {
-                return "--";
-            }
-        } else if (arg.equals("player_region_names_leader")) {
-            List<String> regions = RedProtect.get().getRegionManager().getLeaderRegions(p.getUniqueId().toString())
-                    .stream().map(CoreRegion::getName).toList();
-            return String.join(", ", regions);
-        } else if (arg.equals("player_region_names_admin")) {
-            List<String> regions = RedProtect.get().getRegionManager().getAdminRegions(p.getUniqueId().toString())
-                    .stream().map(CoreRegion::getName).toList();
-            return String.join(", ", regions);
-        } else if (arg.equals("player_region_names_member")) {
-            List<String> regions = RedProtect.get().getRegionManager().getMemberRegions(p.getUniqueId().toString())
-                    .stream().map(CoreRegion::getName).toList();
-            return String.join(", ", regions);
-        } else if (arg.startsWith("player_region_names_leader_")) {
-            List<String> regions = new ArrayList<>();
-            var worldName = Bukkit.getWorld(arg.replace("player_region_names_leader_", ""));
-            if (worldName != null){
-                regions = RedProtect.get().getRegionManager().getLeaderRegions(p.getUniqueId().toString(), worldName.getName())
-                        .stream().map(CoreRegion::getName).toList();
-            }
-            return String.join(", ", regions);
-        } else if (arg.startsWith("player_region_names_admin_")) {
-            List<String> regions = new ArrayList<>();
-            var worldName = Bukkit.getWorld(arg.replace("player_region_names_admin_", ""));
-            if (worldName != null){
-                regions = RedProtect.get().getRegionManager().getAdminRegions(p.getUniqueId().toString(), worldName.getName())
-                        .stream().map(CoreRegion::getName).toList();
-            }
-            return String.join(", ", regions);
-        } else if (arg.startsWith("player_region_names_member_")) {
-            List<String> regions = new ArrayList<>();
-            var worldName = Bukkit.getWorld(arg.replace("player_region_names_member_", ""));
-            if (worldName != null){
-                regions = RedProtect.get().getRegionManager().getMemberRegions(p.getUniqueId().toString(), worldName.getName())
-                        .stream().map(CoreRegion::getName).toList();
-            }
-            return String.join(", ", regions);
-        } else if (arg.equals("region_value")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            if (r != null)
-                return String.valueOf(r.getValue());
-            return "0";
-        } else if (arg.equals("region_area")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            if (r != null)
-                return String.valueOf(r.getArea());
-            return "0";
-        } else if (arg.equals("region_welcome")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            if (r != null)
-                return r.getWelcome();
-            return "--";
-        } else if (arg.equals("region_center_x")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            if (r != null)
-                return String.valueOf(r.getCenterX());
-            return "0";
-        } else if (arg.equals("region_center_y")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            if (r != null)
-                return String.valueOf(r.getCenterY());
-            return "0";
-        } else if (arg.equals("region_center_z")) {
-            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-            if (r != null)
-                return String.valueOf(r.getCenterZ());
-            return "0";
-        } else {
-            return null;
-        }
+    public boolean canRegister() {
+        return true;
+    }
+
+    @Override
+    public boolean persist() {
+        return true;
+    }
+
+    @Override
+    public String getRequiredPlugin() {
+        return "RedProtect";
     }
 
     @Override
@@ -151,5 +68,221 @@ public class PAPIHook extends PlaceholderExpansion {
     @Override
     public String getVersion() {
         return RedProtect.get().getDescription().getVersion();
+    }
+
+    @Override
+    public String onPlaceholderRequest(Player p, String arg) {
+        return onRequest(p, arg);
+    }
+
+    @Override
+    public String onRequest(OfflinePlayer offlinePlayer, String arg) {
+        if (arg == null || RedProtect.get() == null || RedProtect.get().getRegionManager() == null) {
+            return null;
+        }
+
+        Player p = (offlinePlayer != null && offlinePlayer.isOnline()) ? offlinePlayer.getPlayer() : null;
+        String lowerArg = arg.toLowerCase(Locale.ROOT);
+
+        if (lowerArg.equals("player_in_region") || lowerArg.equals("in_region")) {
+            if (p == null || p.getLocation() == null) {
+                return RedProtect.get().getLanguageManager().get("region.wilderness");
+            }
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            return r == null ? RedProtect.get().getLanguageManager().get("region.wilderness") : r.getName();
+        } else if (lowerArg.equals("player_used_claims") || lowerArg.equals("used_claims")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) {
+                return "0";
+            }
+            if (p != null && p.getWorld() != null) {
+                try {
+                    return String.valueOf(RedProtect.get().getRegionManager().getPlayerRegions(uuid, p.getWorld().getName()));
+                } catch (Exception ignored) {
+                }
+            }
+            try {
+                return String.valueOf(RedProtect.get().getRegionManager().getLeaderRegions(uuid).size());
+            } catch (Exception ignored) {
+                return "0";
+            }
+        } else if (lowerArg.equals("player_used_blocks") || lowerArg.equals("used_blocks")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) {
+                return "0";
+            }
+            if (p != null && p.getWorld() != null) {
+                try {
+                    return String.valueOf(RedProtect.get().getRegionManager().getTotalRegionSize(uuid, p.getWorld().getName()));
+                } catch (Exception ignored) {
+                }
+            }
+            try {
+                int total = 0;
+                for (org.bukkit.World w : Bukkit.getWorlds()) {
+                    total += RedProtect.get().getRegionManager().getTotalRegionSize(uuid, w.getName());
+                }
+                return String.valueOf(total);
+            } catch (Exception ignored) {
+                return "0";
+            }
+        } else if (lowerArg.equals("player_total_claims") || lowerArg.equals("total_claims")) {
+            int l = -1;
+            if (p != null) {
+                try {
+                    l = RedProtect.get().getPermissionHandler().getPlayerClaimLimit(p);
+                } catch (Exception ignored) {
+                    l = RedProtect.get().getConfigManager().configRoot().region_settings.claim.amount_per_player;
+                }
+            } else {
+                try {
+                    l = RedProtect.get().getConfigManager().configRoot().region_settings.claim.amount_per_player;
+                } catch (Exception ignored) {
+                    l = 20;
+                }
+            }
+            return l == -1 ? RedProtect.get().getLanguageManager().get("regionbuilder.area.unlimited") : String.valueOf(l);
+        } else if (lowerArg.equals("player_total_blocks") || lowerArg.equals("total_blocks")) {
+            int l = -1;
+            if (p != null) {
+                try {
+                    l = RedProtect.get().getPermissionHandler().getPlayerBlockLimit(p);
+                } catch (Exception ignored) {
+                    l = RedProtect.get().getConfigManager().configRoot().region_settings.limit_amount;
+                }
+            } else {
+                try {
+                    l = RedProtect.get().getConfigManager().configRoot().region_settings.limit_amount;
+                } catch (Exception ignored) {
+                    l = 8000;
+                }
+            }
+            return l == -1 ? RedProtect.get().getLanguageManager().get("regionbuilder.area.unlimited") : String.valueOf(l);
+        } else if (lowerArg.startsWith("region_flag_value_")) {
+            if (p == null || p.getLocation() == null) {
+                return "--";
+            }
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null) {
+                String flagName = lowerArg.replace("region_flag_value_", "");
+                String value = r.getFlagString(flagName);
+                if (value == null) {
+                    return null;
+                }
+                if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+                    return RedProtect.get().getLanguageManager().translBool(value);
+                }
+                return value;
+            } else {
+                return "--";
+            }
+        } else if (lowerArg.equals("player_region_names_leader")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) return "";
+            try {
+                List<String> regions = RedProtect.get().getRegionManager().getLeaderRegions(uuid)
+                        .stream().map(CoreRegion::getName).toList();
+                return String.join(", ", regions);
+            } catch (Exception ignored) {
+                return "";
+            }
+        } else if (lowerArg.equals("player_region_names_admin")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) return "";
+            try {
+                List<String> regions = RedProtect.get().getRegionManager().getAdminRegions(uuid)
+                        .stream().map(CoreRegion::getName).toList();
+                return String.join(", ", regions);
+            } catch (Exception ignored) {
+                return "";
+            }
+        } else if (lowerArg.equals("player_region_names_member")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) return "";
+            try {
+                List<String> regions = RedProtect.get().getRegionManager().getMemberRegions(uuid)
+                        .stream().map(CoreRegion::getName).toList();
+                return String.join(", ", regions);
+            } catch (Exception ignored) {
+                return "";
+            }
+        } else if (lowerArg.startsWith("player_region_names_leader_")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) return "";
+            List<String> regions = new ArrayList<>();
+            var worldName = Bukkit.getWorld(lowerArg.replace("player_region_names_leader_", ""));
+            if (worldName != null) {
+                try {
+                    regions = RedProtect.get().getRegionManager().getLeaderRegions(uuid, worldName.getName())
+                            .stream().map(CoreRegion::getName).toList();
+                } catch (Exception ignored) {
+                }
+            }
+            return String.join(", ", regions);
+        } else if (lowerArg.startsWith("player_region_names_admin_")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) return "";
+            List<String> regions = new ArrayList<>();
+            var worldName = Bukkit.getWorld(lowerArg.replace("player_region_names_admin_", ""));
+            if (worldName != null) {
+                try {
+                    regions = RedProtect.get().getRegionManager().getAdminRegions(uuid, worldName.getName())
+                            .stream().map(CoreRegion::getName).toList();
+                } catch (Exception ignored) {
+                }
+            }
+            return String.join(", ", regions);
+        } else if (lowerArg.startsWith("player_region_names_member_")) {
+            String uuid = offlinePlayer != null ? offlinePlayer.getUniqueId().toString() : (p != null ? p.getUniqueId().toString() : null);
+            if (uuid == null) return "";
+            List<String> regions = new ArrayList<>();
+            var worldName = Bukkit.getWorld(lowerArg.replace("player_region_names_member_", ""));
+            if (worldName != null) {
+                try {
+                    regions = RedProtect.get().getRegionManager().getMemberRegions(uuid, worldName.getName())
+                            .stream().map(CoreRegion::getName).toList();
+                } catch (Exception ignored) {
+                }
+            }
+            return String.join(", ", regions);
+        } else if (lowerArg.equals("region_value")) {
+            if (p == null || p.getLocation() == null) return "0";
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getValue());
+            return "0";
+        } else if (lowerArg.equals("region_area")) {
+            if (p == null || p.getLocation() == null) return "0";
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getArea());
+            return "0";
+        } else if (lowerArg.equals("region_welcome")) {
+            if (p == null || p.getLocation() == null) return "--";
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return r.getWelcome();
+            return "--";
+        } else if (lowerArg.equals("region_center_x")) {
+            if (p == null || p.getLocation() == null) return "0";
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getCenterX());
+            return "0";
+        } else if (lowerArg.equals("region_center_y")) {
+            if (p == null || p.getLocation() == null) return "0";
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getCenterY());
+            return "0";
+        } else if (lowerArg.equals("region_center_z")) {
+            if (p == null || p.getLocation() == null) return "0";
+            Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
+            if (r != null)
+                return String.valueOf(r.getCenterZ());
+            return "0";
+        }
+
+        return null;
     }
 }
