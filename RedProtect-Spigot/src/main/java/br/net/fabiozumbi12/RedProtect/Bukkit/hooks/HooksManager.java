@@ -98,12 +98,16 @@ public class HooksManager {
                 RedProtect.get().logger.info("WorldEdit found. Hooked.");
             }
             if (checkWG()) {
-                RedProtect rp = RedProtect.get();
-                if (rp.isBukkitVersionAtLeast(1, 19)) {
-                    worldGuardHelper = new br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest();
-                    rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
-                } else {
-                    rp.logger.warning("This version is only compatible with server version running on 1.19+. WorldGuard not hooked!");
+                try {
+                    RedProtect rp = RedProtect.get();
+                    if (rp.isBukkitVersionAtLeast(1, 19)) {
+                        worldGuardHelper = new br.net.fabiozumbi12.RedProtect.Bukkit.helpers.WorldGuardHelperLatest();
+                        rp.logger.info("WorldGuard version " + worldGuardHelper.getWorldGuardMajorVersion() + " found. Hooked.");
+                    } else {
+                        rp.logger.warning("This version is only compatible with server version running on 1.19+. WorldGuard not hooked!");
+                    }
+                } catch (Throwable t) {
+                    RedProtect.get().logger.warning("Failed to hook WorldGuard: " + t.getMessage());
                 }
             }
             if (checkAB()) {
@@ -113,16 +117,28 @@ public class HooksManager {
                 RedProtect.get().logger.info("BossbarAPI found. Hooked.");
             }
             if (checkMyPet()) {
-                RedProtect.get().getServer().getPluginManager().registerEvents(new MyPetHook(), RedProtect.get());
-                RedProtect.get().logger.info("MyPet found. Hooked.");
+                try {
+                    RedProtect.get().getServer().getPluginManager().registerEvents(new MyPetHook(), RedProtect.get());
+                    RedProtect.get().logger.info("MyPet found. Hooked.");
+                } catch (Throwable t) {
+                    RedProtect.get().logger.warning("Failed to hook MyPet: " + t.getMessage());
+                }
             }
             if (mcMMO) {
-                RedProtect.get().getServer().getPluginManager().registerEvents(new McMMOHook(), RedProtect.get());
-                RedProtect.get().logger.info("mcMMo found. Hooked.");
+                try {
+                    RedProtect.get().getServer().getPluginManager().registerEvents(new McMMOHook(), RedProtect.get());
+                    RedProtect.get().logger.info("mcMMo found. Hooked.");
+                } catch (Throwable t) {
+                    RedProtect.get().logger.warning("Failed to hook mcMMO: " + t.getMessage());
+                }
             }
             if (skillAPI) {
-                RedProtect.get().getServer().getPluginManager().registerEvents(new SkillAPIHook(), RedProtect.get());
-                RedProtect.get().logger.info("SkillAPI found. Hooked.");
+                try {
+                    RedProtect.get().getServer().getPluginManager().registerEvents(new SkillAPIHook(), RedProtect.get());
+                    RedProtect.get().logger.info("SkillAPI found. Hooked.");
+                } catch (Throwable t) {
+                    RedProtect.get().logger.warning("Failed to hook SkillAPI: " + t.getMessage());
+                }
             }
             if (checkMyChunk()) {
                 RedProtect.get().logger.success("MyChunk found. Ready to convert!");
@@ -132,12 +148,20 @@ public class HooksManager {
                 RedProtect.get().logger.info("MagicCarpet found. Hooked.");
             }
             if (checkSC()) {
-                clanManager = SimpleClans.getInstance().getClanManager();
-                RedProtect.get().logger.info("SimpleClans found. Hooked.");
+                try {
+                    clanManager = SimpleClans.getInstance().getClanManager();
+                    RedProtect.get().logger.info("SimpleClans found. Hooked.");
+                } catch (Throwable t) {
+                    RedProtect.get().logger.warning("Failed to hook SimpleClans: " + t.getMessage());
+                }
             }
             if (placeHolderAPI) {
-                new PAPIHook().register();
-                RedProtect.get().logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
+                try {
+                    new PAPIHook().register();
+                    RedProtect.get().logger.info("PlaceHolderAPI found. Hooked and registered some chat placeholders.");
+                } catch (Throwable t) {
+                    RedProtect.get().logger.warning("Failed to hook PlaceHolderAPI: " + t.getMessage());
+                }
             }
             if (fac) {
                 RedProtect.get().getServer().getPluginManager().registerEvents(new FactionsHook(), RedProtect.get());
