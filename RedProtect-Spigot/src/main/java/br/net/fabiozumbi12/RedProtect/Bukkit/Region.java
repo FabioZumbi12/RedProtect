@@ -1229,6 +1229,11 @@ public class Region extends CoreRegion {
         if (!flagExists("can-collide")) return true;
         return getFlagBool("can-collide");
     }
+
+    public boolean canPushAndPull() {
+        if (!flagExists("push-and-pull")) return true;
+        return getFlagBool("push-and-pull");
+    }
     //--------------------------------------------------------------//
 
     public void setValue(double value) {

@@ -272,6 +272,11 @@ public class RedProtect extends JavaPlugin {
         // Register as listener
         getServer().getPluginManager().registerEvents(rpvHelper, this);
 
+        try {
+            Class.forName("io.papermc.paper.event.entity.EntityKnockbackEvent");
+            getServer().getPluginManager().registerEvents(new PaperListener(), this);
+        } catch (ClassNotFoundException ignored) {}
+
         // Print helper version
         logger.info("Helper version: " + rpvHelper.getVersion());
 

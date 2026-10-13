@@ -1930,4 +1930,23 @@ public class PlayerListener implements Listener {
         }
     }
 
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onPlayerFish(PlayerFishEvent e) {
+        if (e.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {
+            Entity caught = e.getCaught();
+            if (caught instanceof Player) {
+                Player fisher = e.getPlayer();
+                Region rVictim = RedProtect.get().getRegionManager().getTopRegion(caught.getLocation());
+                Region rFisher = RedProtect.get().getRegionManager().getTopRegion(fisher.getLocation());
+
+                if ((rVictim != null && !rVictim.canPushAndPull()) || (rFisher != null && !rFisher.canPushAndPull())) {
+                    if (e.getHook() != null) {
+                        e.getHook().remove();
+                    }
+                    e.setCancelled(true);
+                }
+            }
+        }
+    }
+
 }

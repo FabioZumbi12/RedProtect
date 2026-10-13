@@ -130,6 +130,11 @@ public class VersionHelperLatest implements VersionHelper {
             guiRoot.gui_flags.put("use-potions", new FlagGuiCategory.GuiFlag(Material.GLASS_BOTTLE.name(), 26));
             guiRoot.gui_flags.put("redstone", new FlagGuiCategory.GuiFlag(Material.REDSTONE.name(), 14));
             guiRoot.gui_flags.put("block-transform", new FlagGuiCategory.GuiFlag(Material.BOOKSHELF.name(), 12));
+            guiRoot.gui_flags.put("push-and-pull", new FlagGuiCategory.GuiFlag(Material.FISHING_ROD.name(), 21));
+            guiRoot.gui_flags.put("can-pet", new FlagGuiCategory.GuiFlag(Material.BONE.name(), 11));
+            guiRoot.gui_flags.put("can-back", new FlagGuiCategory.GuiFlag(Material.ENDER_EYE.name(), 15));
+            guiRoot.gui_flags.put("can-collide", new FlagGuiCategory.GuiFlag(Material.SHIELD.name(), 23));
+            guiRoot.gui_flags.put("can-hunger", new FlagGuiCategory.GuiFlag(Material.COOKED_BEEF.name(), 24));
         }
 
         for (String key : RedProtect.get().getConfigManager().getDefFlagsValues().keySet()) {
