@@ -490,6 +490,12 @@ public class PlayerListener implements Listener {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantedit");
                 event.setCancelled(true);
             }
+        } else if (e instanceof LeashHitch) {
+            Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+            if (r != null && !r.canBuild(p) && !r.canInteractPassives(p)) {
+                RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
+                event.setCancelled(true);
+            }
         } else if (e instanceof Minecart || e instanceof Boat) {
             Region r = RedProtect.get().getRegionManager().getTopRegion(l);
             if (r != null && !r.canMinecart(p)) {
@@ -509,6 +515,36 @@ public class PlayerListener implements Listener {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
                 event.setCancelled(true);
             }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onPlayerLeash(PlayerLeashEntityEvent e) {
+        Player p = e.getPlayer();
+        if (p == null || !RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
+
+        Location l = e.getEntity().getLocation();
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+        if (r != null && !r.canBuild(p) && !r.canInteractPassives(p)) {
+            RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantinteract");
+            e.setCancelled(true);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true, priority = EventPriority.LOWEST)
+    public void onPlayerUnleash(PlayerUnleashEntityEvent e) {
+        Player p = e.getPlayer();
+        if (p == null || !RedProtect.get().getUtil().isRealPlayer(p)) {
+            return;
+        }
+
+        Location l = e.getEntity().getLocation();
+        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+        if (r != null && !r.canBuild(p) && !r.canInteractPassives(p)) {
+            RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantinteract");
+            e.setCancelled(true);
         }
     }
 

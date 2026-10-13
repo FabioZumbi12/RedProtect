@@ -223,8 +223,8 @@ jobs:
         shell: bash
         env:
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
-          WEBHOOK_USERNAME: Jenkins
-          WEBHOOK_AVATAR_URL: https://www.jenkins.io/images/logos/jenkins/jenkins.png
+          WEBHOOK_USERNAME: Github
+          WEBHOOK_AVATAR_URL: https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/GitHub_Invertocat_Logo.svg/960px-GitHub_Invertocat_Logo.svg.png
           RELEASE_NAME: ${{ steps.release.outputs.release_name }}
           BUILD_NUMBER: ${{ steps.meta.outputs.build_number }}
           BUILD_URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
