@@ -68,7 +68,7 @@ public class DigiFile<T> implements Serializable {
 
     private void load() {
         try {
-            ObjectInputStream tmp = new ObjectInputStream(new FileInputStream(file.getPath()));
+            ObjectInputStream tmp = new ValidatingObjectInputStream(new FileInputStream(file.getPath()));
             Object rv = tmp.readObject();
             tmp.close();
             o = (T) rv;
@@ -79,5 +79,26 @@ public class DigiFile<T> implements Serializable {
 
     public T get() {
         return o;
+    }
+
+    private static class ValidatingObjectInputStream extends ObjectInputStream {
+        public ValidatingObjectInputStream(InputStream in) throws IOException {
+            super(in);
+        }
+
+        @Override
+        protected Class<?> resolveClass(ObjectStreamClass desc) throws IOException, ClassNotFoundException {
+            String name = desc.getName();
+            if (name.startsWith("java.lang.") ||
+                name.startsWith("java.util.") ||
+                name.startsWith("br.net.fabiozumbi12.buyrentregion.") ||
+                name.startsWith("[Ljava.lang.") ||
+                name.startsWith("[Ljava.util.") ||
+                name.startsWith("[Lbr.net.fabiozumbi12.buyrentregion.") ||
+                name.equals("[B") || name.equals("[I") || name.equals("[Z") || name.equals("[J") || name.equals("[S") || name.equals("[C") || name.equals("[F") || name.equals("[D")) {
+                return super.resolveClass(desc);
+            }
+            throw new ClassNotFoundException("Deserialization of class not allowed: " + name);
+        }
     }
 }
