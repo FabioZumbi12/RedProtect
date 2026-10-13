@@ -74,7 +74,8 @@ public class BlockListener implements Listener {
                         type.name().contains("ICE") ||
                         type.name().contains("FIRE") ||
                         type.name().contains("CORAL") ||
-                        type.name().contains("POWDER")
+                        type.name().contains("POWDER") ||
+                        type.name().contains("FARMLAND")
         )) {
             e.setCancelled(true);
         }
