@@ -227,14 +227,23 @@ public class EntityListener implements Listener {
                                 return;
                             }
                             if ((r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) || (r1.flagExists("pvp") && !r2.canPVP((Player) e1, p2))) {
+                                if (de.getDamager() instanceof FishHook && r1.canPushAndPull(p2) && r2.canPushAndPull(p2)) {
+                                    return;
+                                }
                                 e.setCancelled(true);
                                 RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                             }
                         } else if (r1.flagExists("pvp") && !r1.canPVP((Player) e1, p2)) {
+                            if (de.getDamager() instanceof FishHook && r1.canPushAndPull(p2)) {
+                                return;
+                            }
                             e.setCancelled(true);
                             RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                         }
                     } else if (r2 != null && r2.flagExists("pvp") && !r2.canPVP((Player) e1, p2)) {
+                        if (de.getDamager() instanceof FishHook && r2.canPushAndPull(p2)) {
+                            return;
+                        }
                         e.setCancelled(true);
                         RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpvp");
                     }
@@ -242,6 +251,7 @@ public class EntityListener implements Listener {
             } else if (e1 instanceof Animals || e1 instanceof Villager || e1 instanceof Golem || e1 instanceof WaterMob) {
                 if (r1 != null && e2 instanceof Player p2) {
                     if (e1 instanceof WaterMob && r1.canFish(p2)) return;
+                    if (de.getDamager() instanceof FishHook && r1.canPushAndPull(p2)) return;
                     if (!r1.canInteractPassives(p2)) {
                         e.setCancelled(true);
                         RedProtect.get().getLanguageManager().sendMessage(p2, "entitylistener.region.cantpassive");

@@ -1274,6 +1274,12 @@ public class Region extends CoreRegion {
         if (!flagExists("push-and-pull")) return true;
         return getFlagBool("push-and-pull");
     }
+
+    public boolean canPushAndPull(Player p) {
+        if (p == null) return canPushAndPull();
+        if (!flagExists("push-and-pull")) return true;
+        return getFlagBool("push-and-pull") || checkAllowedPlayer(p, "push-and-pull");
+    }
     //--------------------------------------------------------------//
 
     public void setValue(double value) {

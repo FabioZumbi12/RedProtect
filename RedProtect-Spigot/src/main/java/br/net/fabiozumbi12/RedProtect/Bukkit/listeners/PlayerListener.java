@@ -644,6 +644,9 @@ public class PlayerListener implements Listener {
         }
 
         if (e.getEntity() instanceof Player && !p.equals(e.getEntity()) && r.flagExists("pvp") && !r.canPVP((Player) e.getEntity(), p)) {
+            if (e.getDamager() instanceof FishHook && r.canPushAndPull(p)) {
+                return;
+            }
             RedProtect.get().getLanguageManager().sendMessage(p, "entitylistener.region.cantpvp");
             e.setCancelled(true);
         }
@@ -1936,12 +1939,12 @@ public class PlayerListener implements Listener {
     public void onPlayerFish(PlayerFishEvent e) {
         if (e.getState() == PlayerFishEvent.State.CAUGHT_ENTITY) {
             Entity caught = e.getCaught();
-            if (caught instanceof Player) {
+            if (caught != null) {
                 Player fisher = e.getPlayer();
                 Region rVictim = RedProtect.get().getRegionManager().getTopRegion(caught.getLocation());
                 Region rFisher = RedProtect.get().getRegionManager().getTopRegion(fisher.getLocation());
 
-                if ((rVictim != null && !rVictim.canPushAndPull()) || (rFisher != null && !rFisher.canPushAndPull())) {
+                if ((rVictim != null && !rVictim.canPushAndPull(fisher)) || (rFisher != null && !rFisher.canPushAndPull(fisher))) {
                     if (e.getHook() != null) {
                         e.getHook().remove();
                     }
