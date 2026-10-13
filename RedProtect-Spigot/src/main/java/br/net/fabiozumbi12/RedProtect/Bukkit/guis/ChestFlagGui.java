@@ -218,11 +218,9 @@ public class ChestFlagGui implements Listener {
 
                     if (lore.get(0).equalsIgnoreCase(trueVal)) {
                         lore.set(0, falseVal);
-                        item.setAmount(1);
                         itemMeta.removeEnchant(Enchantment.UNBREAKING);
                     } else {
                         lore.set(0, trueVal);
-                        item.setAmount(2);
                         itemMeta.addEnchant(Enchantment.UNBREAKING, 0, true);
                         itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
                     }
@@ -337,12 +335,10 @@ public class ChestFlagGui implements Listener {
             String valueStr;
             if (selected) {
                 valueStr = RedProtect.get().guiLang.getFlagString("true");
-                item.setAmount(2);
                 itemMeta.addEnchant(Enchantment.UNBREAKING, 0, true);
                 itemMeta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
             } else {
                 valueStr = RedProtect.get().guiLang.getFlagString("false");
-                item.setAmount(1);
             }
 
             String display = translateAlternateColorCodes('&', "&6" + formatName(mat.name()));
@@ -456,7 +452,6 @@ public class ChestFlagGui implements Listener {
                     newLore.set(0, newLoreLine);
                     meta.setLore(newLore);
                     boolean isTrue = newLoreLine.contains(RedProtect.get().guiLang.getFlagString("true"));
-                    item.setAmount(isTrue ? 2 : 1);
                     if (isTrue) {
                         meta.addEnchant(Enchantment.UNBREAKING, 0, true);
                         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
