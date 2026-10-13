@@ -77,6 +77,10 @@ public class RedProtectUtil extends CoreUtil {
         this.plugin = plugin;
     }
 
+    public static String sanitizeTableName(String tableName) {
+        return tableName == null ? null : tableName.replace("`", "");
+    }
+
     public String dateNow() {
         return dateNow(RedProtect.get().getConfigManager().configRoot().region_settings.date_format);
     }
@@ -519,7 +523,7 @@ public class RedProtectUtil extends CoreUtil {
             Connection dbcon = DriverManager.getConnection("jdbc:mysql://" + RedProtect.get().getConfigManager().configRoot().mysql.host + "/" + RedProtect.get().getConfigManager().configRoot().mysql.db_name + "?autoReconnect=true", RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
 
             for (World world : Bukkit.getWorlds()) {
-                String tableName = RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world.getName();
+                String tableName = sanitizeTableName(RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world.getName());
                 PreparedStatement st = dbcon.prepareStatement("SELECT * FROM `" + tableName + "` WHERE world=?");
                 st.setString(1, world.getName());
                 ResultSet rs = st.executeQuery();
@@ -663,7 +667,7 @@ public class RedProtectUtil extends CoreUtil {
 
             String dbname = RedProtect.get().getConfigManager().configRoot().mysql.db_name;
             String url = "jdbc:mysql://" + RedProtect.get().getConfigManager().configRoot().mysql.host + "/";
-            String tableName = RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world.getName();
+            String tableName = sanitizeTableName(RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world.getName());
 
             Connection dbcon = DriverManager.getConnection(url + dbname, RedProtect.get().getConfigManager().configRoot().mysql.user_name, RedProtect.get().getConfigManager().configRoot().mysql.user_pass);
 
@@ -716,7 +720,7 @@ public class RedProtectUtil extends CoreUtil {
 
             String url = "jdbc:mysql://" + RedProtect.get().getConfigManager().configRoot().mysql.host + "/";
             String reconnect = "?autoReconnect=true";
-            String tableName = RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world.getName();
+            String tableName = sanitizeTableName(RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world.getName());
 
             try {
                 Class.forName("com.mysql.jdbc.Driver");

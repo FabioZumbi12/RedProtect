@@ -31,6 +31,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.CoreUtil;
 import br.net.fabiozumbi12.RedProtect.Core.helpers.LogLevel;
 import br.net.fabiozumbi12.RedProtect.Core.region.PlayerRegion;
+import br.net.fabiozumbi12.RedProtect.Bukkit.helpers.RedProtectUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandException;
@@ -58,7 +59,7 @@ public class WorldMySQLRegionManager implements WorldRegionManager {
         super();
         this.regions = new HashMap<>();
         this.world = world;
-        this.tableName = RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world;
+        this.tableName = RedProtectUtil.sanitizeTableName(RedProtect.get().getConfigManager().configRoot().mysql.table_prefix + world);
 
         this.dbcon = null;
         try {
