@@ -86,6 +86,7 @@ permissions:
       redprotect.flag.redstone: true
       redprotect.flag.block-transform: true
       redprotect.flag.spawn-mob-gui: true
+      redprotect.flag.chest-gui: true
   redprotect.command.admin:
     description: "Recommended Admin permissions."
     default: op
@@ -154,3 +155,4 @@ permissions:
       redprotect.need-claim-to-build.bypass: true
       redprotect.allowed-claim-world.*: true
       redprotect.flag.item-gui: true
+      redprotect.flag.chest-gui: true

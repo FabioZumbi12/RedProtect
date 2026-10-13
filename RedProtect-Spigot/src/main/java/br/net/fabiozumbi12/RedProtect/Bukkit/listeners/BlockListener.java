@@ -466,7 +466,7 @@ public class BlockListener implements Listener {
                     }
                 }
                 if (chest != null){
-                    if (cont.canOpen(chest, p, true) || (r.canChest(p) && !cont.canOpen(chest, p, false)) || (!r.canChest(p) && cont.canOpen(chest, p, false)) || (!r.canChest(p) && !cont.canOpen(chest, p, false))){
+                    if (cont.canOpen(chest, p, true) || (r.canChest(p, chest.getType()) && !cont.canOpen(chest, p, false)) || (!r.canChest(p, chest.getType()) && cont.canOpen(chest, p, false)) || (!r.canChest(p, chest.getType()) && !cont.canOpen(chest, p, false))){
                         e.setCancelled(true);
                         RedProtect.get().getLanguageManager().sendMessage(e.getPlayer(), "playerlistener.region.cantinteract");
                     }

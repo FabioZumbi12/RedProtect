@@ -1135,6 +1135,46 @@ public class Region extends CoreRegion {
         return getFlagBool("chest") || checkAllowedPlayer(p, "chest");
     }
 
+    public boolean canChest(Player p, Material type) {
+        if (checkAllowedPlayer(p, "chest")) {
+            return true;
+        }
+        if (!flagExists("chest")) {
+            return getFlagBool("chest");
+        }
+        String flagVal = getFlagString("chest").trim();
+        if (flagVal.equalsIgnoreCase("true")) {
+            return true;
+        }
+        if (flagVal.equalsIgnoreCase("false")) {
+            return false;
+        }
+        if (type == null) {
+            return false;
+        }
+        String typeName = type.name();
+        String[] blocks = flagVal.split(",");
+        for (String b : blocks) {
+            String blockName = b.trim();
+            if (blockName.equalsIgnoreCase(typeName)) {
+                return true;
+            }
+            if (blockName.equalsIgnoreCase("SHULKER_BOX") && typeName.endsWith("SHULKER_BOX")) {
+                return true;
+            }
+            if (blockName.equalsIgnoreCase("ANVIL") && (typeName.equals("CHIPPED_ANVIL") || typeName.equals("DAMAGED_ANVIL"))) {
+                return true;
+            }
+            if (blockName.equalsIgnoreCase("CAMPFIRE") && typeName.equals("SOUL_CAMPFIRE")) {
+                return true;
+            }
+            if (blockName.equalsIgnoreCase("CAULDRON") && typeName.contains("CAULDRON")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean canLever(Player p) {
         return getFlagBool("lever") || checkAllowedPlayer(p, "lever");
     }

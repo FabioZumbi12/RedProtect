@@ -262,7 +262,17 @@ public class FlagGui implements Listener {
                 new ItemFlagGui(this.player, this.region, flag).open();
                 return;
             }
+            if (flag.equalsIgnoreCase("chest") &&
+                    RedProtect.get().getPermissionHandler().hasPerm(this.player, "redprotect.flag.chest-gui")) {
+                close(true);
+                new ChestFlagGui(this.player, this.region, flag).open();
+                return;
+            }
             if (flagValue instanceof Boolean) {
+                if (this.region.setFlag(this.player, flag, !this.region.getFlagBool(flag))) {
+                    RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
+                }
+            } else {
                 if (this.region.setFlag(this.player, flag, !this.region.getFlagBool(flag))) {
                     RedProtect.get().getLanguageManager().sendMessage(player, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + this.region.getFlagBool(flag));
                 }

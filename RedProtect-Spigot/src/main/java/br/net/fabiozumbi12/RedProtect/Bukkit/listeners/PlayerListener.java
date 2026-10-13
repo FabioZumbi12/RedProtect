@@ -354,10 +354,12 @@ public class PlayerListener implements Listener {
                             event.setCancelled(true);
                         }
                     } else if (b.getState() instanceof InventoryHolder ||
-                            RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches)) {
+                            RedProtect.get().getConfigManager().configRoot().private_cat.allowed_blocks.stream().anyMatch(b.getType().name()::matches) ||
+                            RedProtect.get().getConfigManager().configRoot().flags_configuration.custom_containers.stream().anyMatch(b.getType().name()::equalsIgnoreCase) ||
+                            b.getType().name().contains("CAMPFIRE")) {
                         var open = cont.canOpen(b, p, true);
                         if (!open){
-                            if ((r.canChest(p) && !cont.canOpen(b, p, false)) || (!r.canChest(p) && cont.canOpen(b, p, false)) || (!r.canChest(p) && !cont.canOpen(b, p, false))) {
+                            if ((r.canChest(p, b.getType()) && !cont.canOpen(b, p, false)) || (!r.canChest(p, b.getType()) && cont.canOpen(b, p, false)) || (!r.canChest(p, b.getType()) && !cont.canOpen(b, p, false))) {
                                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantopen");
                                 event.setCancelled(true);
                             }

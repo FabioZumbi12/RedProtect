@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.CommandHandlers;
 import br.net.fabiozumbi12.RedProtect.Bukkit.commands.SubCommand;
+import br.net.fabiozumbi12.RedProtect.Bukkit.guis.ChestFlagGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.FlagGui;
 import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
 import org.bukkit.Bukkit;
@@ -238,6 +239,21 @@ public class FlagCommand implements SubCommand {
                 if (args.length == 3) return Collections.singletonList(String.valueOf(p.getLocation().getBlockX()));
                 if (args.length == 4) return Collections.singletonList(String.valueOf(p.getLocation().getBlockY()));
                 if (args.length == 5) return Collections.singletonList(String.valueOf(p.getLocation().getBlockZ()));
+            }
+        }
+        if (args[0].equalsIgnoreCase("chest")) {
+            if (args.length == 2) {
+                List<String> list = new ArrayList<>(Arrays.asList("true", "false"));
+                list.addAll(ChestFlagGui.CONTAINER_BLOCKS);
+                List<String> customBlocks = RedProtect.get().getConfigManager().configRoot().flags_configuration.custom_containers;
+                if (customBlocks != null) {
+                    for (String custom : customBlocks) {
+                        if (custom != null && !list.contains(custom.toUpperCase())) {
+                            list.add(custom.toUpperCase());
+                        }
+                    }
+                }
+                return list.stream().filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
             }
         }
         return new ArrayList<>();

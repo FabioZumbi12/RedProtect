@@ -161,6 +161,8 @@ public class MainCategory {
         public int effects_duration = 5;
         @Setting(value = "mod-entities", comment = "Add MOD entities names for Animal or Monster spawn flags.\nCheck \"textures.conf\" for entity names.")
         public modEntities modEntities = new modEntities();
+        @Setting(value = "custom-containers", comment = "Add custom or MOD block names to be manageable in the 'chest' flag GUI.")
+        public List<String> custom_containers = new ArrayList<>();
 
         @ConfigSerializable
         public static class flagsDelay {

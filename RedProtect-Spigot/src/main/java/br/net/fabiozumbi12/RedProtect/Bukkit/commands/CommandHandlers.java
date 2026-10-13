@@ -30,6 +30,7 @@ import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.RenameRegionEvent;
 import br.net.fabiozumbi12.RedProtect.Bukkit.RedProtect;
 import br.net.fabiozumbi12.RedProtect.Bukkit.Region;
 import br.net.fabiozumbi12.RedProtect.Bukkit.API.events.DeleteRegionEvent;
+import br.net.fabiozumbi12.RedProtect.Bukkit.guis.ChestFlagGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.ItemFlagGui;
 import br.net.fabiozumbi12.RedProtect.Bukkit.guis.MobFlagGui;
 import br.net.fabiozumbi12.RedProtect.Core.config.CoreConfigManager;
@@ -797,6 +798,11 @@ public class CommandHandlers {
                                 RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagBool(flag));
                                 RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
                             }
+                        } else if (flag.equalsIgnoreCase("chest") || flag.equalsIgnoreCase("spawn-animals") || flag.equalsIgnoreCase("spawn-monsters")) {
+                            if (r.setFlag(p, flag, value)) {
+                                RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.set").replace("{flag}", "'" + flag + "'") + " " + r.getFlagString(flag));
+                                RedProtect.get().logger.addLog("(World " + r.getWorld() + ") Player " + p.getName() + " SET FLAG " + flag + " of region " + r.getName() + " to " + r.getFlagString(flag));
+                            }
                         } else {
                             RedProtect.get().getLanguageManager().sendMessage(p, RedProtect.get().getLanguageManager().get("cmdmanager.region.flag.usage") + " <true/false>");
                         }
@@ -869,6 +875,15 @@ public class CommandHandlers {
 
                             MobFlagGui mobFlagGui = new MobFlagGui(p, r, flag);
                             mobFlagGui.open();
+                            return;
+                        }
+                    }
+
+                    // Chest flag
+                    if (RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.flag.chest-gui")) {
+                        if (flag.equalsIgnoreCase("chest")) {
+                            ChestFlagGui chestFlagGui = new ChestFlagGui(p, r, flag);
+                            chestFlagGui.open();
                             return;
                         }
                     }
