@@ -896,6 +896,35 @@ public class Region extends CoreRegion {
         return !flagExists("can-back") || getFlagBool("can-back") || checkAllowedPlayer(p, "can-back");
     }
 
+    public Location getRespawnLocation() {
+        if (!flagExists("respawn-location")) {
+            return null;
+        }
+        String val = getFlagString("respawn-location").trim();
+        if (val.isEmpty()) {
+            return null;
+        }
+        if (val.equalsIgnoreCase("tppoint")) {
+            return getTPPoint();
+        }
+        String[] split = val.split(" ");
+        if (split.length >= 4) {
+            World w = Bukkit.getWorld(split[0]);
+            if (w != null) {
+                try {
+                    double x = Double.parseDouble(split[1]);
+                    double y = Double.parseDouble(split[2]);
+                    double z = Double.parseDouble(split[3]);
+                    float yaw = split.length >= 5 ? Float.parseFloat(split[4]) : 0f;
+                    float pitch = split.length >= 6 ? Float.parseFloat(split[5]) : 0f;
+                    return new Location(w, x, y, z, yaw, pitch);
+                } catch (NumberFormatException ignored) {
+                }
+            }
+        }
+        return null;
+    }
+
     public boolean isPvPArena() {
         return flagExists("pvparena") && getFlagBool("pvparena");
     }

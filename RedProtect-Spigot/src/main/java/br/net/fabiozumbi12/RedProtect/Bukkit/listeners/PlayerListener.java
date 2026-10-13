@@ -926,6 +926,17 @@ public class PlayerListener implements Listener {
             return;
         }
 
+        if (deathLocs.containsKey(p.getName()) && deathLocs.get(p.getName()).containsKey(0)) {
+            Location deathLoc = deathLocs.get(p.getName()).get(0);
+            Region r = RedProtect.get().getRegionManager().getTopRegion(deathLoc);
+            if (r != null && r.flagExists("respawn-location")) {
+                Location respawnLoc = r.getRespawnLocation();
+                if (respawnLoc != null) {
+                    e.setRespawnLocation(respawnLoc);
+                }
+            }
+        }
+
         //check for death listener
         deathListener(p, 1);
     }

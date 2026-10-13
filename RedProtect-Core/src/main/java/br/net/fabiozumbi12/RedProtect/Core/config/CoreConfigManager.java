@@ -90,6 +90,7 @@ public class CoreConfigManager {
             "can-back",
             "for-sale",
             "set-portal",
+            "respawn-location",
             "exit",
             "particles",
             "show-map",

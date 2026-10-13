@@ -225,6 +225,21 @@ public class FlagCommand implements SubCommand {
                 return Collections.singletonList(String.valueOf(10));
             }
         }
+        if (args[0].equalsIgnoreCase("respawn-location")) {
+            if (args.length == 2) {
+                List<String> options = new ArrayList<>();
+                options.add("tppoint");
+                for (World w : Bukkit.getWorlds()) {
+                    options.add(w.getName());
+                }
+                return options.stream().filter(s -> s.toLowerCase().startsWith(args[1].toLowerCase())).collect(Collectors.toList());
+            }
+            if (args.length >= 3 && args.length <= 5 && sender instanceof Player p) {
+                if (args.length == 3) return Collections.singletonList(String.valueOf(p.getLocation().getBlockX()));
+                if (args.length == 4) return Collections.singletonList(String.valueOf(p.getLocation().getBlockY()));
+                if (args.length == 5) return Collections.singletonList(String.valueOf(p.getLocation().getBlockZ()));
+            }
+        }
         return new ArrayList<>();
     }
 }

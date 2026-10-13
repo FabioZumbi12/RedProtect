@@ -910,6 +910,7 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("deny-break") ||
                 flag.equalsIgnoreCase("deny-place") ||
                 flag.equalsIgnoreCase("set-portal") ||
+                flag.equalsIgnoreCase("respawn-location") ||
                 flag.equalsIgnoreCase("particles") ||
                 flag.equalsIgnoreCase("spawn-animals") ||
                 flag.equalsIgnoreCase("spawn-monsters") ||
@@ -1093,6 +1094,36 @@ public class CommandHandlers {
             }
             Region r = RedProtect.get().getRegionManager().getRegion(valida[0], valida[1]);
             if (r == null) {
+                return false;
+            }
+        }
+
+        if (flag.equalsIgnoreCase("respawn-location")) {
+            if (!(value instanceof String)) {
+                return false;
+            }
+            String val = value.toString().trim();
+            if (val.equalsIgnoreCase("tppoint")) {
+                return true;
+            }
+            String[] coords = val.split(" ");
+            if (coords.length < 4) {
+                return false;
+            }
+            if (Bukkit.getWorld(coords[0]) == null) {
+                return false;
+            }
+            try {
+                Double.parseDouble(coords[1]);
+                Double.parseDouble(coords[2]);
+                Double.parseDouble(coords[3]);
+                if (coords.length >= 5) {
+                    Float.parseFloat(coords[4]);
+                }
+                if (coords.length >= 6) {
+                    Float.parseFloat(coords[5]);
+                }
+            } catch (NumberFormatException e) {
                 return false;
             }
         }
