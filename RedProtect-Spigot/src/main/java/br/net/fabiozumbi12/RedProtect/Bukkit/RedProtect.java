@@ -199,6 +199,7 @@ public class RedProtect extends JavaPlugin {
     }
 
     private void startLoad() throws Exception {
+        bukkitVersion = getBukkitVersion();
         redProtectUtil = new RedProtectUtil(this);
         config = new ConfigManager();
         lang = new LangManager();
@@ -351,6 +352,9 @@ public class RedProtect extends JavaPlugin {
     }
 
     public boolean isBukkitVersionAtLeast(int major, int minor) {
+        if (this.bukkitVersion == null) {
+            this.bukkitVersion = getBukkitVersion();
+        }
         String[] parts = bukkitVersion.split("\\.");
         int m = Integer.parseInt(parts[0]);
         int n = parts.length > 1 ? Integer.parseInt(parts[1]) : 0;

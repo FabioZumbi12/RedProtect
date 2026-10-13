@@ -135,7 +135,7 @@ public class PlayerListener implements Listener {
         Player p = e.getPlayer();
 
         Region r = RedProtect.get().getRegionManager().getTopRegion(p.getLocation());
-        if (r != null && !r.usePotions(p) && p.getItemInHand().getType().name().contains("POTION")) {
+        if (r != null && !r.usePotions(p) && e.getItem() != null && e.getItem().getType().name().contains("POTION")) {
             e.setCancelled(true);
             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
             return;
@@ -388,7 +388,11 @@ public class PlayerListener implements Listener {
                             event.setCancelled(true);
                         }
                     } else if (itemInHand != null && itemInHand.getType().equals(Material.WATER_BUCKET)) {
-                        if (!r.canFish(p)) {
+                        if (!r.canBuild(p) && !r.canPlace(itemInHand.getType())) {
+                            RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
+                            event.setUseItemInHand(Event.Result.DENY);
+                            event.setCancelled(true);
+                        } else if (!r.canFish(p)) {
                             RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantinteract");
                             event.setUseItemInHand(Event.Result.DENY);
                             event.setCancelled(true);
@@ -433,11 +437,9 @@ public class PlayerListener implements Listener {
                         event.setCancelled(true);
                     } else if ((itemInHand != null && !itemInHand.getType().equals(Material.AIR)) && !r.canBuild(p) && !r.canPlace(itemInHand.getType()) && !r.canBreak(itemInHand.getType()) &&
                             (itemInHand.getType().equals(Material.FLINT_AND_STEEL) ||
-                                    itemInHand.getType().equals(Material.BUCKET) ||
-                                    itemInHand.getType().equals(Material.LAVA_BUCKET) ||
+                                    itemInHand.getType().name().contains("BUCKET") ||
                                     itemInHand.getType().equals(Material.ITEM_FRAME) ||
                                     itemInHand.getType().name().equals("END_CRYSTAL") ||
-                                    (!r.canFish(p) && itemInHand.getType().equals(Material.WATER_BUCKET)) ||
                                     itemInHand.getType().equals(Material.PAINTING))) {
                         RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.region.cantuse");
                         event.setCancelled(true);
@@ -1779,11 +1781,21 @@ public class PlayerListener implements Listener {
             return;
         }
         Player p = e.getPlayer();
-        Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+        Block bClicked = e.getBlockClicked();
+        Block bPlaced = e.getBlock();
+        Region rClicked = bClicked != null ? RedProtect.get().getRegionManager().getTopRegion(bClicked.getLocation()) : null;
+        Region rPlaced = bPlaced != null ? RedProtect.get().getRegionManager().getTopRegion(bPlaced.getLocation()) : null;
+        Material bucket = e.getBucket();
 
-        if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
+        if (rPlaced != null && !rPlaced.canBuild(p) && !rPlaced.canPlace(bucket)) {
             e.setCancelled(true);
+            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
+            return;
+        }
+
+        if (rClicked != null && !rClicked.canBuild(p) && !rClicked.canPlace(bucket)) {
+            e.setCancelled(true);
+            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
         }
     }
 
@@ -1793,11 +1805,20 @@ public class PlayerListener implements Listener {
             return;
         }
         Player p = e.getPlayer();
-        Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
+        Block bClicked = e.getBlockClicked();
+        Block bFilled = e.getBlock();
+        Region rClicked = bClicked != null ? RedProtect.get().getRegionManager().getTopRegion(bClicked.getLocation()) : null;
+        Region rFilled = bFilled != null ? RedProtect.get().getRegionManager().getTopRegion(bFilled.getLocation()) : null;
 
-        if (r != null && !r.canBuild(p) && (p.getItemInHand().getType().name().contains("BUCKET"))) {
+        if (rClicked != null && !rClicked.canBuild(p) && !rClicked.canBreak(bClicked.getType())) {
             e.setCancelled(true);
+            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
+            return;
+        }
+
+        if (rFilled != null && !rFilled.canBuild(p) && !rFilled.canBreak(bFilled.getType())) {
+            e.setCancelled(true);
+            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
         }
     }
 

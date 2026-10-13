@@ -521,13 +521,15 @@ public class GlobalListener implements Listener {
     @EventHandler(ignoreCancelled = true)
 
     public void onBucketUse(PlayerBucketEmptyEvent e) {
-        Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-        if (r != null) {
+        Location lClicked = e.getBlockClicked().getLocation();
+        Location lPlaced = e.getBlock().getLocation();
+        Region rClicked = RedProtect.get().getRegionManager().getTopRegion(lClicked);
+        Region rPlaced = RedProtect.get().getRegionManager().getTopRegion(lPlaced);
+        if (rClicked != null || rPlaced != null) {
             return;
         }
 
-        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
+        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), lClicked) || !RedProtect.get().getUtil().canBuildNear(e.getPlayer(), lPlaced)) {
             e.setCancelled(true);
             return;
         }
@@ -539,13 +541,15 @@ public class GlobalListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onBucketFill(PlayerBucketFillEvent e) {
-        Location l = e.getBlockClicked().getLocation();
-        Region r = RedProtect.get().getRegionManager().getTopRegion(l);
-        if (r != null) {
+        Location lClicked = e.getBlockClicked().getLocation();
+        Location lFilled = e.getBlock().getLocation();
+        Region rClicked = RedProtect.get().getRegionManager().getTopRegion(lClicked);
+        Region rFilled = RedProtect.get().getRegionManager().getTopRegion(lFilled);
+        if (rClicked != null || rFilled != null) {
             return;
         }
 
-        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), l)) {
+        if (!RedProtect.get().getUtil().canBuildNear(e.getPlayer(), lClicked) || !RedProtect.get().getUtil().canBuildNear(e.getPlayer(), lFilled)) {
             e.setCancelled(true);
             return;
         }
