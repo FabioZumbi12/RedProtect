@@ -31,7 +31,7 @@
     <artifactId>RedProtect</artifactId>
     <packaging>pom</packaging>
     <name>RedProtect</name>
-    <version>8.1.3-SNAPSHOT</version>
+    <version>8.2.0-SNAPSHOT</version>
 
     <description>Spigot plugin to protect region and manage server security</description>
     <url>https://github.com/FabioZumbi12/RedProtect</url>

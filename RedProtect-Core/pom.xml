@@ -31,7 +31,7 @@
     <parent>
         <artifactId>RedProtect</artifactId>
         <groupId>io.github.fabiozumbi12.RedProtect</groupId>
-        <version>8.1.3-SNAPSHOT</version>
+        <version>8.2.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
