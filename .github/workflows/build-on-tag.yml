@@ -11,6 +11,14 @@ on:
       - master
     tags:
       - "*"
+    paths-ignore:
+      - "**.md"
+      - ".run/**"
+      - ".gitignore"
+      - "LICENSE"
+      - "docs/**"
+      - "*.bat"
+      - "*.ps1"
 
 permissions:
   contents: write
