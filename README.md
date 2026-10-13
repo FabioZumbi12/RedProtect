@@ -5,6 +5,16 @@
 RedProtect is an area protection plugin focused on player-managed regions, giving users control over claiming and managing
 their own protected areas without depending on staff to set them up.
 
+## Fork Changes / Perubahan Fork
+
+### Fix Off-Hand (Left Hand) Water Bucket Bypass
+- **Masalah (Issue)**: Pemain bisa menaruh ember air (*water bucket*) di dalam klaim/region RedProtect milik orang lain tanpa izin jika ember ditaruh di *off-hand* (tangan kiri / left hand). Hal ini terjadi karena pengecekan sebelumnya menggunakan `player.getItemInHand()` yang hanya membaca item di *main hand* (tangan kanan). Apabila tangan kanan memegang item lain (seperti pedang, tool, atau tangan kosong), validasi bucket dilewati dan air tetap dapat ditaruh.
+- **Perbaikan (Fix)**:
+  - **`PlayerListener.onBucketUse` & `onBucketFill`**: Diperbarui untuk memvalidasi event bucket (`PlayerBucketEmptyEvent` / `PlayerBucketFillEvent`) secara langsung tanpa bergantung pada tangan yang digunakan (`getItemInHand`), serta memvalidasi izin bangun (`canBuild` dan `canPlace` / `canBreak`) baik pada blok yang diklik (`getBlockClicked`) maupun blok target tempat cairan ditaruh/diambil (`getBlock`).
+  - **`PlayerListener.onPlayerInteract`**: Memastikan semua tipe bucket (termasuk `WATER_BUCKET`) wajib lolos izin bangun (`canBuild` / `canPlace`) sebelum dapat berinteraksi dengan blok di dalam region, sehingga tidak lagi ter-bypass oleh status izin memancing (`canFish`).
+  - **`GlobalListener`**: Memvalidasi kedua lokasi blok (`getBlockClicked` & `getBlock`) terhadap region dan aturan `canBuildNear`.
+
+
 ## Links
 
 - Discord: https://discord.gg/VHTwk53
