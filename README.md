@@ -5,27 +5,6 @@
 RedProtect is an area protection plugin focused on player-managed regions, giving users control over claiming and managing
 their own protected areas without depending on staff to set them up.
 
-## Fork Changes / Perubahan Fork
-
-### Fix Off-Hand (Left Hand) Water Bucket Bypass
-- **Masalah (Issue)**: Pemain bisa menaruh ember air (*water bucket*) di dalam klaim/region RedProtect milik orang lain tanpa izin jika ember ditaruh di *off-hand* (tangan kiri / left hand). Hal ini terjadi karena pengecekan sebelumnya menggunakan `player.getItemInHand()` yang hanya membaca item di *main hand* (tangan kanan). Apabila tangan kanan memegang item lain (seperti pedang, tool, atau tangan kosong), validasi bucket dilewati dan air tetap dapat ditaruh.
-- **Perbaikan (Fix)**:
-  - **`PlayerListener.onBucketUse` & `onBucketFill`**: Diperbarui untuk memvalidasi event bucket (`PlayerBucketEmptyEvent` / `PlayerBucketFillEvent`) secara langsung tanpa bergantung pada tangan yang digunakan (`getItemInHand`), serta memvalidasi izin bangun (`canBuild` dan `canPlace` / `canBreak`) baik pada blok yang diklik (`getBlockClicked`) maupun blok target tempat cairan ditaruh/diambil (`getBlock`).
-  - **`PlayerListener.onPlayerInteract`**: Memastikan semua tipe bucket (termasuk `WATER_BUCKET`) wajib lolos izin bangun (`canBuild` / `canPlace`) sebelum dapat berinteraksi dengan blok di dalam region, sehingga tidak lagi ter-bypass oleh status izin memancing (`canFish`).
-  - **`GlobalListener`**: Memvalidasi kedua lokasi blok (`getBlockClicked` & `getBlock`) terhadap region dan aturan `canBuildNear`.
-
-### Fix PlaceholderAPI Scoreboard / TAB Placeholders
-- **Masalah (Issue)**: Placeholder RedProtect untuk scoreboard/TAB (seperti `%redprotect_player_used_claims%` dan `%redprotect_player_total_claims%`) tidak terbaca atau muncul sebagai teks mentah (*raw string*). Hal ini disebabkan karena:
-  1. `PAPIHook` tidak meng-override `persist()`, sehingga ketika PlaceholderAPI atau plugin TAB di-reload (`/papi reload` / `/tab reload`), hook RedProtect otomatis ter-unregister dan hilang.
-  2. `PAPIHook` tidak mengimplementasikan `onRequest(OfflinePlayer, String)` yang merupakan standar PlaceholderAPI modern (v2.10+), melainkan hanya `onPlaceholderRequest(Player, String)`.
-  3. Pemanggilan scoreboard yang dieksekusi secara asinkron atau terhadap objek `OfflinePlayer` menghasilkan `NullPointerException` (karena `p.getUniqueId()` / `p.getWorld()` / `p.getLocation()` bernilai null), menyebabkan PlaceholderAPI gagal mem-parse placeholder.
-- **Perbaikan (Fix)**:
-  - Mengimplementasikan `persist() -> true`, `canRegister() -> true`, dan `getRequiredPlugin() -> "RedProtect"` agar hook tidak hilang saat reload.
-  - Mengimplementasikan `onRequest(OfflinePlayer, String)` dengan penanganan null-safety penuh baik untuk pemain online maupun offline (mengambil UUID dan limit klaim default/permission secara aman).
-  - Menambahkan try-catch dan fallback aman untuk menghindari `NullPointerException` atau `ConcurrentModificationException` saat pembacaan placeholder scoreboard berlangsung secara asinkron.
-
-
-
 ## Links
 
 - Discord: https://discord.gg/VHTwk53
