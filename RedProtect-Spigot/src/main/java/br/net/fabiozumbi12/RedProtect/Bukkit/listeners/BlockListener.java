@@ -325,6 +325,12 @@ public class BlockListener implements Listener {
                 b.setType(m);
             }
 
+            if (!RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass") && r.denyPlace(b.getType())) {
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
+                e.setCancelled(true);
+                return;
+            }
+
             if (!r.canBuild(p) && !r.canPlace(b.getType())) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
                 e.setCancelled(true);
@@ -394,6 +400,12 @@ public class BlockListener implements Listener {
                 RedProtect.get().getConfigManager().removeSign(r.getID(), b.getLocation());
                 return;
             }
+        }
+
+        if (r != null && !RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass") && r.denyBreak(b.getType())) {
+            RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
+            e.setCancelled(true);
+            return;
         }
 
         if (r != null && !r.canBuild(p) && !r.canTree(b) && !r.canMining(b) && !r.canCrops(b, true) && !r.canBreak(b.getType())) {

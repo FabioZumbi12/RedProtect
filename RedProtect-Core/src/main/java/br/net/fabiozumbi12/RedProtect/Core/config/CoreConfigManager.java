@@ -62,6 +62,8 @@ public class CoreConfigManager {
             "can-projectiles",
             "allow-place",
             "allow-break",
+            "deny-place",
+            "deny-break",
             "can-pet",
             "allow-cmds",
             "deny-cmds",

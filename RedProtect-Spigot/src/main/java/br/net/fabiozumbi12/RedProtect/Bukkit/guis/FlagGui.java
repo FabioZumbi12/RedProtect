@@ -254,7 +254,9 @@ public class FlagGui implements Listener {
             if ((flag.equalsIgnoreCase("deny-enter-items") ||
                     flag.equalsIgnoreCase("allow-enter-items") ||
                     flag.equalsIgnoreCase("allow-place") ||
-                    flag.equalsIgnoreCase("allow-break")) &&
+                    flag.equalsIgnoreCase("allow-break") ||
+                    flag.equalsIgnoreCase("deny-place") ||
+                    flag.equalsIgnoreCase("deny-break")) &&
                     RedProtect.get().getPermissionHandler().hasPerm(this.player, "redprotect.flag.item-gui")) {
                 close(true);
                 new ItemFlagGui(this.player, this.region, flag).open();

@@ -844,6 +844,32 @@ public class Region extends CoreRegion {
         return false;
     }
 
+    public boolean denyPlace(Material b) {
+        if (!flagExists("deny-place")) {
+            return false;
+        }
+        String[] blocks = getFlagString("deny-place").replace(" ", "").split(",");
+        for (String block : blocks) {
+            if (block.toUpperCase().equals(b.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean denyBreak(Material b) {
+        if (!flagExists("deny-break")) {
+            return false;
+        }
+        String[] blocks = getFlagString("deny-break").replace(" ", "").split(",");
+        for (String block : blocks) {
+            if (block.toUpperCase().equals(b.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean canTree() {
         return flagExists("treefarm") && getFlagBool("treefarm");
     }

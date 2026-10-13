@@ -1820,6 +1820,14 @@ public class PlayerListener implements Listener {
         Region rPlaced = bPlaced != null ? RedProtect.get().getRegionManager().getTopRegion(bPlaced.getLocation()) : null;
         Material bucket = e.getBucket();
 
+        if (!RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass")) {
+            if ((rPlaced != null && rPlaced.denyPlace(bucket)) || (rClicked != null && rClicked.denyPlace(bucket))) {
+                e.setCancelled(true);
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
+                return;
+            }
+        }
+
         if (rPlaced != null && !rPlaced.canBuild(p) && !rPlaced.canPlace(bucket)) {
             e.setCancelled(true);
             RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
@@ -1842,6 +1850,14 @@ public class PlayerListener implements Listener {
         Block bFilled = e.getBlock();
         Region rClicked = bClicked != null ? RedProtect.get().getRegionManager().getTopRegion(bClicked.getLocation()) : null;
         Region rFilled = bFilled != null ? RedProtect.get().getRegionManager().getTopRegion(bFilled.getLocation()) : null;
+
+        if (!RedProtect.get().getPermissionHandler().hasPerm(p, "redprotect.bypass")) {
+            if ((rClicked != null && rClicked.denyBreak(bClicked.getType())) || (rFilled != null && rFilled.denyBreak(bFilled.getType()))) {
+                e.setCancelled(true);
+                RedProtect.get().getLanguageManager().sendMessage(p, "blocklistener.region.cantbuild");
+                return;
+            }
+        }
 
         if (rClicked != null && !rClicked.canBuild(p) && !rClicked.canBreak(bClicked.getType())) {
             e.setCancelled(true);

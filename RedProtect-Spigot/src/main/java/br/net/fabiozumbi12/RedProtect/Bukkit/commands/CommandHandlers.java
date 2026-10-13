@@ -851,7 +851,9 @@ public class CommandHandlers {
                         if (flag.equalsIgnoreCase("deny-enter-items") ||
                                 flag.equalsIgnoreCase("allow-enter-items") ||
                                 flag.equalsIgnoreCase("allow-place") ||
-                                flag.equalsIgnoreCase("allow-break")) {
+                                flag.equalsIgnoreCase("allow-break") ||
+                                flag.equalsIgnoreCase("deny-place") ||
+                                flag.equalsIgnoreCase("deny-break")) {
 
                             ItemFlagGui itemGui = new ItemFlagGui(p, r, flag);
                             itemGui.open();
@@ -905,6 +907,8 @@ public class CommandHandlers {
                 flag.equalsIgnoreCase("deny-cmds") ||
                 flag.equalsIgnoreCase("allow-break") ||
                 flag.equalsIgnoreCase("allow-place") ||
+                flag.equalsIgnoreCase("deny-break") ||
+                flag.equalsIgnoreCase("deny-place") ||
                 flag.equalsIgnoreCase("set-portal") ||
                 flag.equalsIgnoreCase("particles") ||
                 flag.equalsIgnoreCase("spawn-animals") ||
