@@ -118,16 +118,8 @@ public class RedProtectUtil extends CoreUtil {
     public boolean denyPotion(ItemStack result, World world) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(world.getName()).deny_potions;
         if (result != null && !Pots.isEmpty() && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
-            PotionMeta pot = (PotionMeta) result.getItemMeta();
-            String potname = "";
-            try{
-                potname = Objects.requireNonNull(pot).getBasePotionType().name();
-            } catch (Exception ex){
-                try{
-                    potname = Objects.requireNonNull(pot).getBasePotionType().name();
-                } catch (Exception ignored){}
-            }
-            return Pots.contains(potname);
+            String potname = getPotionTypeName(result);
+            return !potname.isEmpty() && Pots.contains(potname);
         }
         return false;
     }
@@ -135,21 +127,33 @@ public class RedProtectUtil extends CoreUtil {
     public boolean denyPotion(ItemStack result, Player p) {
         List<String> Pots = RedProtect.get().getConfigManager().globalFlagsRoot().worlds.get(p.getWorld().getName()).deny_potions;
         if (result != null && !Pots.isEmpty() && (result.getType().name().contains("POTION") || result.getType().name().contains("TIPPED"))) {
-            PotionMeta pot = (PotionMeta) result.getItemMeta();
-            String potname = "";
-            try{
-                potname = Objects.requireNonNull(pot).getBasePotionType().name();
-            } catch (Exception ex){
-                try{
-                    potname = Objects.requireNonNull(pot).getBasePotionType().name();
-                } catch (Exception ignored){}
-            }
-            if (Pots.contains(potname)) {
+            String potname = getPotionTypeName(result);
+            if (!potname.isEmpty() && Pots.contains(potname)) {
                 RedProtect.get().getLanguageManager().sendMessage(p, "playerlistener.denypotion");
                 return true;
             }
         }
         return false;
+    }
+
+    @SuppressWarnings("deprecation")
+    private String getPotionTypeName(ItemStack item) {
+        if (item == null || !(item.getItemMeta() instanceof PotionMeta)) {
+            return "";
+        }
+        PotionMeta pot = (PotionMeta) item.getItemMeta();
+        try {
+            if (pot.getBasePotionType() != null) {
+                return pot.getBasePotionType().name();
+            }
+        } catch (NoSuchMethodError ignored) {
+            try {
+                if (pot.getBasePotionData() != null && pot.getBasePotionData().getType() != null) {
+                    return pot.getBasePotionData().getType().name();
+                }
+            } catch (Throwable ignored2) {}
+        } catch (Throwable ignored) {}
+        return "";
     }
 
     public boolean isRealPlayer(Player p) {
