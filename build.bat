@@ -1,3 +1,3 @@
 @echo off
-mvn clean install -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dgpg.skip=true
+mvn clean install -Dmaven.javadoc.skip=true -Dmaven.source.skip=true -Dgpg.skip=true -U
 
